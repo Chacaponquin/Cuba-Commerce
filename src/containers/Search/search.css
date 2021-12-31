@@ -1,0 +1,16 @@
+.search-container {
+    display: flex;
+    flex-direction: column;
+    padding: 0px 200px;
+}
+
+.search-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-header>img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}

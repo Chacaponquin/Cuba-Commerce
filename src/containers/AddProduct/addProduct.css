@@ -1,0 +1,211 @@
+.addProduct {
+    display: flex;
+    padding: 0px 200px;
+    justify-content: center;
+}
+
+.addImageDiv {
+    border: 3px dashed var(--secondary-color);
+    padding: 75px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: 0.4s all ease;
+    height: max-content;
+    color: gray;
+    fill: var(--secondary-color);
+}
+
+.addImageDiv>svg {
+    fill: inherit;
+}
+
+.addImageDiv>p {
+    font-weight: 600;
+    color: inherit;
+    font-size: 17px;
+}
+
+.addImageDiv:hover {
+    background-color: rgba(23, 175, 221, 0.397);
+    color: white;
+}
+
+.product-form {
+    display: flex;
+    flex-direction: column;
+    padding: 0 30px;
+    margin-left: 60px;
+}
+
+.product-form form {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-form form label {
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.product-form form input:focus {
+    border: 2px solid var(--secondary-color);
+}
+
+.product-form form input,
+.product-form form textarea {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    font-size: 17px;
+    border-radius: 8px;
+    padding: 7px 10px;
+    min-width: 500px;
+    outline: none;
+    border: 1px solid gray;
+    resize: none;
+}
+
+.product-form form>div {
+    display: flex;
+    padding: 10px 0px;
+}
+
+.product-form form>div>input {
+    border-radius: 8px 0px 0px 8px;
+    margin: 0;
+}
+
+.product-form form>div>div:last-child {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0px 20px;
+    color: white;
+    background-color: var(--secondary-color);
+    border: none;
+    border-radius: 0px 8px 8px 0px;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.categories-blocks {
+    display: flex;
+}
+
+.categories-blocks #category-form {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 5px;
+    background-color: var(--secondary-color);
+    color: white;
+    margin-right: 15px;
+}
+
+.categories-blocks #category-form svg {
+    margin-left: 5px;
+    position: relative;
+    top: 2px;
+}
+
+.category-search-result {
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.category-search-result>div {
+    background-color: whitesmoke;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.category-search-result>div:hover {
+    background-color: white;
+}
+
+.category-search-result>div:first-child {
+    border-radius: 8px 8px 0px 0px;
+}
+
+.category-search-result>div:last-child {
+    border-radius: 0px 0px 8px 8px;
+}
+
+.imagesSelected {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 25px;
+}
+
+.imagesSelected img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.imagesSelected button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    justify-content: space-around;
+}
+
+.imagesSelected p {
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.createProduct-button {
+    width: 100%;
+    padding: 16px 0px;
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    border: none;
+    font-size: 25px;
+    color: white;
+}
+
+.addProduct-error-position {
+    right: 20px;
+}
+
+.addProduct-form-error {
+    border: 3px solid var(--primary-color) !important;
+}
+
+.noImage-error {
+    fill: var(--primary-color) !important;
+    border: 3px dashed var(--primary-color) !important;
+}
+
+.addProduct-loading {
+    border-radius: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.addProduct-loading svg {
+    width: 70px;
+    fill: var(--primary-color);
+}

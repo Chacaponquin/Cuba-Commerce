@@ -1,0 +1,231 @@
+.myProfile-container {
+    display: flex;
+    flex-direction: column;
+    padding: 0px 200px;
+}
+
+.decoration-section {
+    background-color: var(--secondary-color);
+    height: 300px;
+    border-radius: 20px;
+    width: 100%;
+}
+
+.myProfile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.myProfile-Inf {
+    display: flex;
+    background-color: white;
+    border-radius: 20px;
+    bottom: 150px;
+    position: relative;
+    padding: 40px 30px;
+    box-shadow: 3px 3px 15px black;
+    max-width: 80%;
+}
+
+.myProfile-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.myProfile-image svg {
+    position: absolute;
+    fill: var(--secondary-color);
+    width: 30px;
+    height: 30px;
+    transform: translateY(75px);
+    cursor: pointer;
+}
+
+.myProfile-image img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.myProfile-infSection {
+    display: flex;
+    flex-direction: column;
+    padding: 0px 35px;
+    flex-wrap: wrap;
+}
+
+.myProfile-infSection>div {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.myProfile-infSection>div>form {
+    display: flex;
+    align-items: center;
+}
+
+.myProfile-infSection>div>form>input,
+.myProfile-infSection>div>form>textarea {
+    font-size: 18px;
+    padding: 5px 10px;
+    width: 100%;
+    border: none;
+    outline: none;
+    border: 2px solid black;
+    border-radius: 7px;
+    resize: none;
+}
+
+.myProfile-infSection>div>form>input:focus,
+.myProfile-infSection>div>form>textarea:focus {
+    border: 3px solid var(--secondary-color);
+}
+
+.myProfile-infSection>div>svg,
+.myProfile-infSection>div>form svg {
+    cursor: pointer;
+    margin-left: 20px;
+    width: 30px;
+    height: 30px;
+    transition: all ease 0.4s;
+    color: gray;
+}
+
+.myProfile-infSection>div svg:hover {
+    fill: var(--secondary-color);
+}
+
+.myProfile-infSection>h1 {
+    font-size: 24px;
+}
+
+.myProfile-description-label {
+    margin-top: 10px;
+}
+
+.myProfile-infSection>div>p {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.myProfile-description p {
+    color: gray;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+}
+
+.myProfile-followers-section {
+    display: flex;
+    margin-top: 10px !important;
+}
+
+.myProfile-followers-section>div {
+    display: flex;
+    align-items: center;
+}
+
+.myProfile-followers-section>div:first-child {
+    margin-right: 35px;
+}
+
+.myProfile-followers-section>div>p {
+    font-weight: 600;
+    font-size: 22px;
+    margin-right: 10px;
+}
+
+.myProfile-followers-section>div>h1 {
+    color: gray;
+    font-size: 21px;
+}
+
+.allProducts-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.allProducts-section>* {
+    transform: translateY(-120px);
+}
+
+.allProducts-section h1 {
+    border-bottom: 5px solid var(--primary-color);
+    padding: 0px 30px 3px 0px;
+    font-size: 45px;
+    align-self: flex-start;
+}
+
+.myProfile-allProducts {
+    display: flex;
+    padding: 20px 20px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.myProfile-product {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding-right: 30px;
+    transition: 0.4s ease all;
+}
+
+.myProfile-product:hover {
+    transform: scale(1.05);
+}
+
+.myProfile-product>img {
+    height: 220px;
+    width: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.myProfile-product>p {
+    font-weight: 600;
+    font-size: 18px;
+    padding: 10px 0px;
+}
+
+.eliminate-button {
+    display: flex;
+    padding: 8px 15px;
+    border-radius: 4px;
+    align-items: center;
+    color: black;
+    fill: black;
+    transition: 0.3s ease all;
+    cursor: pointer;
+    background-color: whitesmoke;
+    justify-content: center;
+}
+
+.eliminate-button:hover {
+    background-color: var(--primary-color);
+    color: white;
+    fill: white;
+}
+
+.eliminate-button svg {
+    position: relative;
+    fill: inherit;
+    top: 2px;
+    margin-left: 10px;
+}
+
+.eliminate-button p {
+    font-size: 18px;
+    font-weight: 600;
+    color: inherit;
+}
+
+.myProfile-error-position {
+    right: 20px;
+}

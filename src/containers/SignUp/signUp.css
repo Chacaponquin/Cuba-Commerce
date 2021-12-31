@@ -1,0 +1,50 @@
+.other-methods {
+    display: flex;
+    flex-direction: row;
+    margin-top: 15px;
+    justify-content: space-between;
+}
+
+.method {
+    display: flex;
+    align-items: center;
+    border-radius: 15px;
+    background-color: var(--primary-color);
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.method:last-child {
+    background-color: var(--secondary-color);
+}
+
+.method p {
+    color: white;
+    font-weight: 600;
+    font-size: 17px;
+}
+
+.method svg {
+    margin-right: 10px;
+}
+
+.select-image-container {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    width: 130px;
+    height: 130px;
+    background-color: var(--secondary-color);
+    cursor: pointer;
+}
+
+.pictureSelected>img {
+    margin-top: 10px;
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 50%;
+    cursor: pointer;
+}

@@ -1,0 +1,146 @@
+.login-container {
+    width: 100%;
+    min-height: 100vh;
+    background-image: url("../../../public/svg/login-bg.svg");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.signIn-card {
+    display: flex;
+    border-radius: 30px;
+    align-items: center;
+    flex-direction: column;
+    background-color: white;
+    padding: 0px 50px 25px 50px;
+}
+
+.signIn-card>img {
+    position: relative;
+    object-fit: cover;
+    width: 170px;
+    height: 170px;
+}
+
+.signIn-card form {
+    display: flex;
+    flex-direction: column;
+}
+
+.signIn-card label {
+    margin: 15px 0px 5px 0px;
+    font-size: 21px;
+    font-weight: 600;
+}
+
+.signIn-card label:first-child {
+    margin-top: 0;
+}
+
+.signIn-card input {
+    padding: 10px 15px;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid black;
+    transition: all 0.2s ease;
+    font-size: 16px;
+    outline: none;
+    min-width: 300px;
+}
+
+.signIn-card a {
+    width: 100%;
+    text-align: left;
+    font-size: 16px;
+    margin-top: 10px;
+    color: var(--secondary-color);
+}
+
+.signIn-card button,
+.loading {
+    margin-top: 20px;
+    background-color: var(--secondary-color);
+    padding: 10px 40px;
+    border-radius: 20px;
+    color: white;
+    font-weight: 600;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.error-message {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    bottom: 20px;
+    background-color: var(--primary-color);
+    padding: 15px 25px;
+    border-radius: 25px;
+    align-items: center;
+}
+
+.signIn-error-position {
+    left: 20px;
+}
+
+.error-message p {
+    font-size: 20px;
+    color: white;
+    font-weight: 600;
+}
+
+.error-message svg {
+    position: relative;
+    top: 2px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.slide-top {
+    -webkit-animation: slide-top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    animation: slide-top 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    padding: 0;
+}
+
+.loading svg {
+    fill: var(--primary-color);
+    width: 40px;
+}
+
+.errorActivate {
+    border: 3px solid var(--primary-color) !important;
+}
+
+@-webkit-keyframes slide-top {
+    0% {
+        -webkit-transform: translateY(100px);
+        transform: translateY(100px);
+    }
+    100% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+}
+
+@keyframes slide-top {
+    0% {
+        -webkit-transform: translateY(100px);
+        transform: translateY(100px);
+    }
+    100% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+}
