@@ -1,0 +1,16 @@
+export const zonas = [
+  "Pinar del Rio",
+  "Artemisa",
+  "Mayabeque",
+  "La Habana",
+  "Matanzas",
+  "Villa Clara",
+  "Cienfuegos",
+  "Las Tunas",
+  "Camaguey",
+  "Granma",
+  "Holguin",
+  "Santiago de Cuba",
+  "Guantanamo",
+  "Isla de la Juventud",
+];

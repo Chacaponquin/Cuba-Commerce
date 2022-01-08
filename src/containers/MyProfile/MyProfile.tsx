@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useFileUpload } from "use-file-upload";
 import { AllProduct, Error, Header, NavBar } from "../../components";
+import { mostrarError } from "../../helpers/errors";
 import { validationMyProfile } from "../../helpers/validations";
 import "./myProfile.css";
 
@@ -36,7 +37,7 @@ const MyProfile = () => {
     if (isEditing) {
       const error = validationMyProfile(inputValue, isEditing);
 
-      if (error) mostrarError(error);
+      if (error) mostrarError(error, setInputError);
       else {
       }
     }
@@ -54,10 +55,6 @@ const MyProfile = () => {
     setIsEditing(null);
   };
 
-  const mostrarError = (error: string): void => {
-    setInputError(error);
-    setTimeout(() => setInputError(null), 8000);
-  };
   return (
     <>
       <NavBar />

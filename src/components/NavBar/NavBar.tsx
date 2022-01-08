@@ -14,7 +14,9 @@ const NavBar = (): JSX.Element => {
       </a>
 
       <div>
-        <FaSearch size={30} />
+        <a href="/search" className="search-icon">
+          <FaSearch size={30} />
+        </a>
 
         {auth.currentUser ? (
           <>
@@ -37,7 +39,6 @@ const NavBar = (): JSX.Element => {
 
 const PropfilePhoto = ({ profile }: ProfilePicture): JSX.Element => {
   const picture = profile.photoURL;
-  console.log(picture);
 
   return (
     <div className="profilePhoto">

@@ -1,3 +1,14 @@
+import { Dispatch } from "react";
+
+//FUNCION PARA MOSTRAR ERROR AL USUARIO Y ELIMINA EL MENSAJE DESPUES DE 8 SEGUNDOS
+export const mostrarError = (
+  error: string,
+  setError: Dispatch<null | string>
+) => {
+  setError(error);
+  setTimeout(() => setError(null), 8000);
+};
+
 export const signUpErrors = {
   noCoincidePassword: "No coinciden tus contraseñas",
   passwordCorta: "Su contraseña debe tener mas de 6 caracteres",
@@ -13,6 +24,7 @@ export const signInErrors = {
 
 export const addProductErrors = {
   requestError: "Hubo un error",
+  priceNegative: "El precio no puede ser negativo",
   nameToLong: "Nombre del producto demasiado largo",
   descriptionLong: "La descripcion del producto es demasiado larga",
   categoryLong: "El nombre de la categoria es demasiado larga",
@@ -28,4 +40,9 @@ export const myProfileErrors = {
   requestError: "Hubo un error",
   nicknameLong: "Tu nuevo nickname es demasiado largo",
   descritptionLong: "Tu nueva descripcion es muy larga",
+};
+
+export const searchErrors = {
+  priceError: "El precio minimo no puede ser mayor al maximo",
+  priceNegative: "Ningun precio puede ser negativo",
 };

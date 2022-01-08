@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const HomeFriends = (): JSX.Element => {
+  useEffect(() => {}, []);
+
   return (
     <div className="home-friends">
       <div className="profile-friend">

@@ -3,12 +3,17 @@ import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { useNavigate } from "react-router";
 import { auth, provider } from "../../firebase/client";
 import { signUpErrors } from "../../helpers/errors";
+import { Dispatch } from "react";
 
 interface AuthenticationProps {
-  mostrarError(error: string): any;
+  setError: Dispatch<null | string>;
+  mostrarError(error: string, setError: Dispatch<null | string>): any;
 }
 
-const Authentication = ({ mostrarError }: AuthenticationProps): JSX.Element => {
+const Authentication = ({
+  mostrarError,
+  setError,
+}: AuthenticationProps): JSX.Element => {
   const navigate = useNavigate();
 
   const authenticationGoogle = () => {
@@ -18,7 +23,7 @@ const Authentication = ({ mostrarError }: AuthenticationProps): JSX.Element => {
         navigate("/");
       })
       .catch((error) => {
-        mostrarError(signUpErrors.requestError);
+        mostrarError(signUpErrors.requestError, setError);
       });
   };
 

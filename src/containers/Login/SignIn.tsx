@@ -7,7 +7,7 @@ import { Authentication, Error } from "../../components";
 import "./signIn.css";
 import "../SignUp/signUp.css";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { signInErrors } from "../../helpers/errors";
+import { mostrarError, signInErrors } from "../../helpers/errors";
 import { useNavigate } from "react-router";
 
 const SignIn = (): JSX.Element => {
@@ -38,20 +38,14 @@ const SignIn = (): JSX.Element => {
         console.log(error.code);
 
         if (error.code === "auth/wrong-password") {
-          mostrarError(signInErrors.wrongPassword);
+          mostrarError(signInErrors.wrongPassword, setFormError);
         } else if (error.code === "auth/user-not-found") {
-          mostrarError(signInErrors.userNotFound);
+          mostrarError(signInErrors.userNotFound, setFormError);
         } else {
-          mostrarError(signInErrors.requestError);
+          mostrarError(signInErrors.requestError, setFormError);
         }
       })
       .finally(() => setLoading(false));
-  };
-
-  //FUNCION PARA MOSTRAR EL ERROR Y ELIMINARLO DESPUES DE 8 SEGUNDOS
-  const mostrarError = (error: string): void => {
-    setFormError(error);
-    setTimeout(() => setFormError(null), 8000);
   };
 
   return (
@@ -86,7 +80,7 @@ const SignIn = (): JSX.Element => {
             className={errors.password ? "errorActivate" : ""}
           />
 
-          <Authentication mostrarError={mostrarError} />
+          <Authentication mostrarError={mostrarError} setError={setFormError} />
 
           {loading ? (
             <div className="loading" {...containerProps}>

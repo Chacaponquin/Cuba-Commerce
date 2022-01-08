@@ -74,7 +74,7 @@
 }
 
 .error-message {
-    position: absolute;
+    position: fixed;
     display: flex;
     flex-direction: row;
     bottom: 20px;
@@ -82,6 +82,7 @@
     padding: 15px 25px;
     border-radius: 25px;
     align-items: center;
+    z-index: 99;
 }
 
 .signIn-error-position {

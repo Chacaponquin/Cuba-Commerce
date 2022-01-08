@@ -4,16 +4,18 @@ import { BsX } from "react-icons/bs";
 import { FaImages } from "react-icons/fa";
 import { useFileUpload } from "use-file-upload";
 import { Error, NavBar } from "../../components";
-import { db, storage } from "../../firebase/client";
+import { auth, db, storage } from "../../firebase/client";
 import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
-import { addProductErrors } from "../../helpers/errors";
+import { addProductErrors, mostrarError } from "../../helpers/errors";
 import { AddProductData } from "../../helpers/types";
 import { validationAddProduct } from "../../helpers/validations";
 import "./addProduct.css";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Bars, useLoading } from "@agney/react-loading";
+import { useNavigate } from "react-router";
 
 const AddProduct = (): JSX.Element => {
+  const navigate = useNavigate();
   const isMount = useRef<boolean>(true);
 
   const { containerProps } = useLoading({ loading: true, indicator: <Bars /> });
@@ -42,12 +44,6 @@ const AddProduct = (): JSX.Element => {
   //STATE QUE CONTIENE EL POSIBLE ERROR EN EL FORMULARIO
   const [formError, setFormError] = useState<null | string>(null);
 
-  //FUNCION PARA MOSTRAR EL ERROR AL USUARIO
-  const mostrarError = (error: string) => {
-    setFormError(error);
-    setTimeout(() => setFormError(null), 8000);
-  };
-
   //FUNCION PARA AÑADIR CATEGORIA AL STATE DE CATEGORIAS
   const addCategory = (): any => {
     const input = categoryInputRef.current?.value;
@@ -67,21 +63,39 @@ const AddProduct = (): JSX.Element => {
 
   const onSubmit = async (data: AddProductData) => {
     //INSTRODUCIR LAS CATEGORIAS Y LAS IMAGENES EN EL FORMULARIO
-    data.categories = categories;
-    data.price = Number(data.price);
-    data.images = images;
-    data.visits = 0;
+    if (auth.currentUser?.uid) {
+      data.categories = categories;
+      data.price = Number(data.price);
+      data.images = images;
+      data.visits = 0;
+      data.creatorID = auth.currentUser?.uid;
+    }
 
+    //VERIFICAR SI EXISTE ALGUN ERROR EN EL FORMULARIO
     const error: null | string = validationAddProduct(data);
 
     data.images = [];
 
-    if (error) mostrarError(error);
+    if (error) mostrarError(error, setFormError);
     else {
       //CAMBIAR EL STATE DE LOADING A TRUE
       setLoading(true);
 
+      //CREAR LA REFERENCIA DONDE SE UBICAN LOS PRODUCTOS EN FIREBASE
       const collectionRef = doc(db, "products", data.name);
+
+      //SE REALIZA UN BUCLE PARA CADA ELEMENTO DEL ARRAY DE LAS CATEGORIAS
+      for (let i = 0; i < data.categories.length; i++) {
+        //CREAR LA REFERENCIA DONDE SE UBICAN LAS CATEGORIAS EN FIREBASE
+        const categoriesRef = doc(db, "categories", data.categories[i]);
+
+        //CREAR EL OBJETO QUE SE VA A SUBIR CON LA NUEVA CATEGORIA
+        const newCategory = { category: data.categories[i] };
+
+        //SUBIR LA NUEVA CATEGORIA
+        await setDoc(categoriesRef, newCategory);
+      }
+
       setDoc(collectionRef, { ...data, timestamp: serverTimestamp() })
         .then(async () => {
           for (let i = 0; i < images.length; i++) {
@@ -101,8 +115,13 @@ const AddProduct = (): JSX.Element => {
 
           //ACTUALIZAR LOS DATOS DEL PRODUCTO CON LAS IMAGENES DESPUES QUE TERMINE EL CICLO
           await updateDoc(collectionRef, { images: data.images });
+
+          //REDIRECCIONAR AL HOME
+          navigate("/");
         })
-        .catch((error) => mostrarError(addProductErrors.requestError))
+        .catch((error) =>
+          mostrarError(addProductErrors.requestError, setFormError)
+        )
         .finally(() => setLoading(false));
     }
   };
@@ -116,15 +135,27 @@ const AddProduct = (): JSX.Element => {
     setCategories(newCategories);
   };
 
+  //FUNCION PARA PERMITIR AL USUARIO SELECCIONAR IMAGENES
   const selectImage = (): void => {
     selectFile({ multiple: true, accept: "image/*" }, (file: any): void => {
+      //SI LA IMAGEN TIENE MAS DE 10MB MUESTRA UN ERROR
       if (file[0].size / 1048576 < 10) setImages(file);
-      else mostrarError(addProductErrors.imageToBig);
+      else mostrarError(addProductErrors.imageToBig, setFormError);
     });
   };
 
   return (
     <>
+      {loading && (
+        <div
+          className="addProduct-loading"
+          {...containerProps}
+          style={{ height: `${window.innerHeight}px` }}
+        >
+          <Bars />
+        </div>
+      )}
+
       <NavBar />
 
       {formError && (
@@ -194,13 +225,7 @@ const AddProduct = (): JSX.Element => {
               isMount={isMount}
             />
 
-            {loading ? (
-              <div className="addProduct-loading" {...containerProps}>
-                <Bars />
-              </div>
-            ) : (
-              <button className="createProduct-button">Create Product</button>
-            )}
+            <button className="createProduct-button">Create Product</button>
           </form>
         </div>
       </div>
@@ -240,7 +265,6 @@ const CategoryInputSection = ({
           setResultHeight(
             document.querySelector(".category-search-result")?.clientHeight
           );
-          console.log("Hola");
         });
     }
 

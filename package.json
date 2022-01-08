@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@agney/react-loading": "^0.1.2",
+    "@splidejs/splide": "^3.6.9",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",

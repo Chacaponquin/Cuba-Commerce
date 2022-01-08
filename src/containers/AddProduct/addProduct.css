@@ -203,9 +203,13 @@
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.541);
+    align-items: center;
+    z-index: 99;
 }
 
 .addProduct-loading svg {
-    width: 70px;
+    width: 170px;
     fill: var(--primary-color);
 }

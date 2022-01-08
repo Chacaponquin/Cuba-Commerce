@@ -18,4 +18,21 @@ export type AddProductData = {
   categories: string[];
   images: any[];
   visits: number;
+  creatorID: string;
+};
+
+export type UsersInfo = {
+  followers: string[];
+  following: string[];
+  image?: string;
+  id: string;
+  nickname: string;
+};
+
+export type SearchParams = {
+  category?: string;
+  priceMin?: number;
+  priceMax?: number;
+  zona?: string;
+  order?: string;
 };

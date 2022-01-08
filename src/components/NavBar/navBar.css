@@ -26,13 +26,18 @@
     background-color: var(--secondary-color);
 }
 
-.navBar>div>svg {
+.search-icon {
     margin-right: 50px;
     transition: all 0.3s ease;
     cursor: pointer;
+    fill: black;
 }
 
-.navBar>div>svg:hover {
+.search-icon>svg {
+    fill: inherit;
+}
+
+.search-icon:hover {
     fill: var(--primary-color);
 }
 
