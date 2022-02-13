@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import { useFileUpload } from "use-file-upload";
 import { AllProduct, Error, Header, NavBar } from "../../components";
+import { db } from "../../firebase/client";
 import { mostrarError } from "../../helpers/errors";
 import { validationMyProfile } from "../../helpers/validations";
 import "./myProfile.css";
@@ -11,7 +14,12 @@ export const isEditingOptions = {
   description: "description",
 };
 
-const MyProfile = () => {
+const MyProfile = (): JSX.Element => {
+  //STATE CON EL PERFIL ENCONTRADO
+  const [profileInf, setProfileInf] = useState<any>(null);
+  //EXTRAER EL ID A BUSCAR DE LA RUTA
+  const { id } = useParams();
+
   //STATE DE ERROR
   const [inputError, setInputError] = useState<null | string>(null);
 
@@ -55,6 +63,18 @@ const MyProfile = () => {
     setIsEditing(null);
   };
 
+  useEffect(() => {
+    const profileQuery = query(collection(db, "users"), where("id", "==", id));
+
+    getDocs(profileQuery)
+      .then((querySnapshot) => {
+        querySnapshot.forEach((profile) => {
+          setProfileInf(profile.data());
+        });
+      })
+      .catch((error) => console.log(error));
+  }, [id]);
+
   return (
     <>
       <NavBar />
@@ -76,9 +96,10 @@ const MyProfile = () => {
           setIsEditing={setIsEditing}
           selectImage={selectImage}
           file={file}
+          profileInf={profileInf}
         />
 
-        <AllProduct />
+        <AllProduct id={id} />
       </div>
     </>
   );

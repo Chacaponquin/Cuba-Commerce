@@ -24,7 +24,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 20px;
+    padding: 15px 20px;
     background-color: whitesmoke;
     width: 100%;
     text-align: center;
@@ -36,7 +36,7 @@
 .category p {
     color: inherit;
     font-weight: 600;
-    font-size: 20px;
+    font-size: 17px;
 }
 
 .category p:last-child {
@@ -109,7 +109,7 @@
     margin-top: 10px;
 }
 
-.post>img {
+.post>a>img {
     object-fit: cover;
     max-width: 300px;
     max-height: 250px;
@@ -201,4 +201,23 @@
     border-bottom: 5px solid black;
     text-align: left;
     width: 100%;
+}
+
+.no-connection-svg {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    align-items: center;
+}
+
+.no-connection-svg img {
+    width: 400px;
+    height: 350px;
+    object-fit: contain;
+}
+
+.no-connection-svg>h1 {
+    padding: 15px 0px;
+    font-size: 50px;
+    color: gray;
 }

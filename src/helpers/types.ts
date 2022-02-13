@@ -12,6 +12,7 @@ export type SignUpData = {
 };
 
 export type AddProductData = {
+  id: string;
   name: string;
   price: number;
   description: string;
@@ -27,6 +28,7 @@ export type UsersInfo = {
   image?: string;
   id: string;
   nickname: string;
+  description?: string;
 };
 
 export type SearchParams = {

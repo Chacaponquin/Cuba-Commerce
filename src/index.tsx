@@ -5,6 +5,7 @@ import {
   AddProduct,
   Home,
   MyProfile,
+  Product,
   Search,
   SignIn,
   SignUp,
@@ -19,8 +20,9 @@ ReactDOM.render(
         <Route path="/signIn" element={<SignIn />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/addProduct" element={<AddProduct />} />
-        <Route path="/myProfile" element={<MyProfile />} />
+        <Route path="/profile/:id" element={<MyProfile />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/product/:productID" element={<Product />} />
       </Routes>
     </Router>
   </React.StrictMode>,

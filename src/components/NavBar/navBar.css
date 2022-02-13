@@ -50,7 +50,7 @@
     transform: scale(1.1);
 }
 
-.navBar>div>div a {
+.navBar>div>section a {
     text-decoration: none;
     padding: 12px 30px;
     font-weight: 600;
@@ -59,33 +59,90 @@
     transition: 0.4s all ease;
 }
 
-.navBar>div>div a:first-child:hover {
+.navBar>div>section a:first-child:hover {
     color: var(--primary-color);
 }
 
-.navBar>div>div a:last-child {
+.navBar>div>section a:last-child {
     border: 2px solid gray;
 }
 
-.navBar>div>div a:last-child:hover {
+.navBar>div>section a:last-child:hover {
     background-color: var(--primary-color);
     color: white;
     border: 2px solid var(--primary-color);
 }
 
-.profilePhoto {
+.profilePhoto {}
+
+.profilePhoto section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profilePhoto img,
+.no-picture {
     width: 60px;
     height: 60px;
-    background-color: var(--secondary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    object-fit: cover;
     border-radius: 50%;
 }
 
-.profilePhoto img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
+.no-picture {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--secondary-color);
+}
+
+@keyframes navBarAnimation {
+    to {
+        opacity: 1;
+        transform: translateY(65px);
+    }
+}
+
+.profile-photo-options {
+    box-shadow: 3px 3px 5px gray;
+    position: absolute;
+    background-color: white;
+    border-radius: 17px;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(65px);
+    padding: 5px 30px;
+    /*POSICION ANIMACION*/
+    transform: translateY(-25px);
+    opacity: 0.3;
+    animation-name: navBarAnimation;
+    animation-duration: 0.3s;
+    animation-timing-function: ease;
+    animation-fill-mode: forwards;
+}
+
+.photo-option {
+    padding: 10px 0px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+}
+
+.photo-option>p {
+    font-weight: 600;
+    font-size: 16px;
+    margin-right: 10px;
+    color: inherit;
+}
+
+.photo-option svg {
+    fill: inherit;
+}
+
+.photo-option:hover {
+    fill: var(--primary-color);
+    color: var(--primary-color);
 }

@@ -25,6 +25,7 @@ const Home = (): JSX.Element => {
   const [bestCategories, setBestCategories] = useState<any[]>([]);
   //STATE DE LA POSIBLE CATEGORIA SELECCIONADA
   const [selectCategory, setSelectCategory] = useState<null | string>(null);
+  //STATE DEL POSIBLE ERROR
 
   useEffect(() => {
     //CAMBIAR EL STATE DE LOADING A TRUE
@@ -95,21 +96,28 @@ const Home = (): JSX.Element => {
     <div className="home-container">
       <NavBar />
 
-      <div className="home-principal">
-        <HomeCategories
-          bestCategories={bestCategories}
-          selectCategory={selectCategory}
-          setBestCategories={setBestCategories}
-          setSelectCategory={setSelectCategory}
-        />
-        <HomePosts
-          posts={homePosts}
-          loading={loading}
-          setSelectCategory={setSelectCategory}
-          selectCategory={selectCategory}
-        />
-        <HomeFriends />
-      </div>
+      {!homePosts.length ? (
+        <div className="no-connection-svg">
+          <img src="./svg/no-connection.svg" alt="Hola" />
+          <h1>No estas conectado</h1>
+        </div>
+      ) : (
+        <div className="home-principal">
+          <HomeCategories
+            bestCategories={bestCategories}
+            selectCategory={selectCategory}
+            setBestCategories={setBestCategories}
+            setSelectCategory={setSelectCategory}
+          />
+          <HomePosts
+            posts={homePosts}
+            loading={loading}
+            setSelectCategory={setSelectCategory}
+            selectCategory={selectCategory}
+          />
+          <HomeFriends />
+        </div>
+      )}
     </div>
   );
 };

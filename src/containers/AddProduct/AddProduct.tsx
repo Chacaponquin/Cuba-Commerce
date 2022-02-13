@@ -5,7 +5,16 @@ import { FaImages } from "react-icons/fa";
 import { useFileUpload } from "use-file-upload";
 import { Error, NavBar } from "../../components";
 import { auth, db, storage } from "../../firebase/client";
-import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  limit,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { addProductErrors, mostrarError } from "../../helpers/errors";
 import { AddProductData } from "../../helpers/types";
 import { validationAddProduct } from "../../helpers/validations";
@@ -16,7 +25,6 @@ import { useNavigate } from "react-router";
 
 const AddProduct = (): JSX.Element => {
   const navigate = useNavigate();
-  const isMount = useRef<boolean>(true);
 
   const { containerProps } = useLoading({ loading: true, indicator: <Bars /> });
 
@@ -69,6 +77,7 @@ const AddProduct = (): JSX.Element => {
       data.images = images;
       data.visits = 0;
       data.creatorID = auth.currentUser?.uid;
+      data.id = String(Date.now());
     }
 
     //VERIFICAR SI EXISTE ALGUN ERROR EN EL FORMULARIO
@@ -222,7 +231,6 @@ const AddProduct = (): JSX.Element => {
               addCategory={addCategory}
               deleteCategory={deleteCategory}
               categories={categories}
-              isMount={isMount}
             />
 
             <button className="createProduct-button">Create Product</button>
@@ -239,7 +247,6 @@ interface CategoryInputProps {
   addCategory: any;
   deleteCategory: any;
   categoryInputRef: any;
-  isMount: any;
 }
 
 const CategoryInputSection = ({
@@ -247,29 +254,45 @@ const CategoryInputSection = ({
   addCategory,
   deleteCategory,
   categoryInputRef,
-  isMount,
 }: CategoryInputProps): JSX.Element => {
+  //STATE DE LA ALTURA DE EL CONTENEDOR DE TODAS LAS CATEGORIAS ENCONTRADAS
   const [resultHeight, setResultHeight] = useState(
     document.querySelector(".category-search-result")?.clientHeight
   );
 
-  useEffect((): any => {
-    if (isMount.current) {
-      setResultHeight(
-        document.querySelector(".category-search-result")?.clientHeight
-      );
+  const [inputSearch, setInputSearch] = useState<string>("");
 
-      document
-        .querySelector(".category-search-result")
-        ?.addEventListener("change", () => {
-          setResultHeight(
-            document.querySelector(".category-search-result")?.clientHeight
-          );
+  //STATE CON TODAS LAS CATEGORIAS ENCONTRADAS
+  const [categoriesFound, setCategoriesFound] = useState<any[]>([]);
+
+  //FUNCION PARA BUSCAR CATEGORIAS RELACIONADAS
+  const handleCategoryChange = (e: any) => {
+    setInputSearch(e.target.value);
+
+    const categoryQuery = query(collection(db, "categories"), limit(10));
+
+    let allCategories: any[] = [];
+    getDocs(categoryQuery)
+      .then((querySnapshot) => {
+        querySnapshot.forEach((category) => {
+          allCategories.push(category.data());
         });
-    }
 
-    return () => (isMount.current = false);
-  }, []);
+        allCategories.filter((category) =>
+          category.category.toLowerCase().includes(inputSearch.toLowerCase())
+        );
+
+        setCategoriesFound(allCategories);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  //USEEFFECT PARA CAMBIAR EL TAMAÑO DEL CONTENEDOR DE CATEGORIAS
+  useEffect((): any => {
+    setResultHeight(
+      document.querySelector(".category-search-result")?.clientHeight
+    );
+  }, [categoriesFound]);
 
   return (
     <>
@@ -281,14 +304,16 @@ const CategoryInputSection = ({
             transform: `translateY(-${resultHeight && resultHeight + 5}px)`,
           }}
         >
-          <div>#hola</div>
-          <div>#hola</div>
+          {categoriesFound.map((category, i: number) => (
+            <div key={i}>{category.category}</div>
+          ))}
         </div>
 
         <input
           type="text"
           className="categories-form-search"
           ref={categoryInputRef}
+          onChange={handleCategoryChange}
         />
         <div onClick={addCategory}>New</div>
       </div>

@@ -38,7 +38,6 @@ const Options = ({
   useEffect(() => {
     //VER SI EXISTE ALGUN ERROR EN LOS PARAMETROS
     const error = validateSearch(searchParams);
-    console.log(error);
 
     if (error) mostrarError(error, setError);
     else {

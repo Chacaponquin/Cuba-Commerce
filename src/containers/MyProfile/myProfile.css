@@ -36,20 +36,35 @@
     justify-content: center;
 }
 
-.myProfile-image svg {
+.myProfile-image>svg {
     position: absolute;
     fill: var(--secondary-color);
     width: 30px;
     height: 30px;
     transform: translateY(75px);
     cursor: pointer;
+    z-index: 9999;
 }
 
 .myProfile-image img {
+    object-fit: cover;
+}
+
+.myProfile-image img,
+.user-file-select {
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    object-fit: cover;
+}
+
+.user-file-select {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-file-select>svg {
+    fill: gray;
 }
 
 .myProfile-infSection {
@@ -154,7 +169,7 @@
     transform: translateY(-120px);
 }
 
-.allProducts-section h1 {
+.allProducts-section>h1 {
     border-bottom: 5px solid var(--primary-color);
     padding: 0px 30px 3px 0px;
     font-size: 45px;
@@ -163,10 +178,15 @@
 
 .myProfile-allProducts {
     display: flex;
-    padding: 20px 20px;
+    padding: 20px 0px;
     flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
+}
+
+.myProfile-allProducts>h1 {
+    font-size: 50px;
+    color: gray;
 }
 
 .myProfile-product {
@@ -192,6 +212,7 @@
     font-weight: 600;
     font-size: 18px;
     padding: 10px 0px;
+    text-transform: capitalize;
 }
 
 .eliminate-button {
@@ -228,4 +249,36 @@
 
 .myProfile-error-position {
     right: 20px;
+}
+
+.myProfile-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 30px 0px;
+}
+
+.myProfile-loading>svg {
+    fill: var(--primary-color);
+    width: 130px;
+    height: 130px;
+}
+
+.addDescription-button {
+    margin: 10px 0px;
+    padding: 10px 20px;
+    color: black;
+    transition: 0.4s ease all;
+    font-weight: 600;
+    font-size: 18px;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    background-color: whitesmoke;
+}
+
+.addDescription-button:hover {
+    background-color: var(--secondary-color);
+    color: white;
 }

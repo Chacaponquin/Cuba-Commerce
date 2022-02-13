@@ -1,21 +1,62 @@
+import { Bars } from "@agney/react-loading";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import { BsX } from "react-icons/bs";
+import { db } from "../../firebase/client";
+import { AddProductData } from "../../helpers/types";
 
-const AllProduct = (): JSX.Element => {
+interface AllProdcuts {
+  id: string | undefined;
+}
+
+const AllProduct = ({ id }: AllProdcuts): JSX.Element => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [allProducts, setAllProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    setLoading(true);
+    const qy = query(collection(db, "products"), where("creatorID", "==", id));
+
+    let productsFound: any[] = [];
+    getDocs(qy)
+      .then((querySnapshot) => {
+        querySnapshot.forEach((product) => {
+          productsFound.push(product.data());
+        });
+
+        setAllProducts(productsFound);
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div className="allProducts-section">
       <h1>All Products</h1>
 
-      <div className="myProfile-allProducts">
-        <div className="myProfile-product">
-          <img src="./product.jpg" alt="" />
-          <p>Audiofonos G-3</p>
-
-          <div className="eliminate-button">
-            <p>Eliminar</p>
-            <BsX size={20} />
-          </div>
+      {loading ? (
+        <div className="myProfile-loading">
+          <Bars />
         </div>
-      </div>
+      ) : (
+        <div className="myProfile-allProducts">
+          {allProducts.length ? (
+            allProducts.map((product: AddProductData, i: number) => (
+              <div className="myProfile-product" key={i}>
+                <img src={product.images[0]} alt={product.name} />
+                <p>{product.name}</p>
+
+                <div className="eliminate-button">
+                  <p>Eliminar</p>
+                  <BsX size={20} />
+                </div>
+              </div>
+            ))
+          ) : (
+            <h1>No tienes productos</h1>
+          )}
+        </div>
+      )}
     </div>
   );
 };

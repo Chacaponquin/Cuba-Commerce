@@ -51,7 +51,10 @@ interface HomePostProps {
 const HomePost = ({ post, setSelectCategory }: HomePostProps): JSX.Element => {
   return (
     <div className="post">
-      <img src={post.images[0]} alt={post.name} />
+      <a href={`/product/${post.id}`}>
+        <img src={post.images[0]} alt={post.name} />
+      </a>
+
       <div>
         <h1>{post.name}</h1>
         <p>{post.description}</p>

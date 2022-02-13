@@ -1,4 +1,7 @@
-import { FaSearch, FaPlus, FaUser } from "react-icons/fa";
+import { useState } from "react";
+import { BsGear } from "react-icons/bs";
+import { FaSearch, FaPlus, FaUser, FaDoorClosed } from "react-icons/fa";
+import { useNavigate } from "react-router";
 import { auth } from "../../firebase/client";
 import "./navBar.css";
 
@@ -14,9 +17,11 @@ const NavBar = (): JSX.Element => {
       </a>
 
       <div>
-        <a href="/search" className="search-icon">
-          <FaSearch size={30} />
-        </a>
+        {auth.currentUser && (
+          <a href="/search" className="search-icon">
+            <FaSearch size={30} />
+          </a>
+        )}
 
         {auth.currentUser ? (
           <>
@@ -24,29 +29,71 @@ const NavBar = (): JSX.Element => {
               <FaPlus size={20} color="white" />
             </a>
 
-            <PropfilePhoto profile={auth.currentUser} />
+            <ProfilePhoto profile={auth.currentUser} />
           </>
         ) : (
-          <div>
+          <section>
             <a href="/signIn">SignIn</a>
             <a href="/signUp">SignUp</a>
-          </div>
+          </section>
         )}
       </div>
     </div>
   );
 };
 
-const PropfilePhoto = ({ profile }: ProfilePicture): JSX.Element => {
+const ProfilePhoto = ({ profile }: ProfilePicture): JSX.Element => {
   const picture = profile.photoURL;
+
+  const [optionsOpen, setOptionsOpen] = useState<boolean>(false);
 
   return (
     <div className="profilePhoto">
       {picture ? (
-        <img src={picture} alt={profile.displayName} />
+        <section>
+          <img
+            src={picture}
+            alt={profile.displayName}
+            onClick={() => setOptionsOpen(!optionsOpen)}
+          />
+
+          {optionsOpen && <ProfileNavBar />}
+        </section>
       ) : (
-        <FaUser color="white" size={25} />
+        <section>
+          <div
+            className="no-picture"
+            onClick={() => setOptionsOpen(!optionsOpen)}
+          >
+            <FaUser color="white" size={25} />
+          </div>
+
+          {optionsOpen && <ProfileNavBar />}
+        </section>
       )}
+    </div>
+  );
+};
+
+const ProfileNavBar = (): JSX.Element => {
+  const navigate = useNavigate();
+  return (
+    <div className="profile-photo-options">
+      <a href={`/profile/${auth.currentUser?.uid}`} className="photo-option">
+        <p>Edit Profile</p>
+        <BsGear size={20} />
+      </a>
+
+      <a
+        href={`/profile/${auth.currentUser?.uid}`}
+        className="photo-option"
+        onClick={() => {
+          auth.signOut().then(() => navigate("/"));
+        }}
+      >
+        <p>Sign Out</p>
+        <FaDoorClosed size={20} />
+      </a>
     </div>
   );
 };

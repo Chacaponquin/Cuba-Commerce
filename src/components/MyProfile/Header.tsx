@@ -1,10 +1,11 @@
 import { Dispatch } from "react";
 import { BsX } from "react-icons/bs";
-import { FaCamera, FaPen } from "react-icons/fa";
+import { FaCamera, FaPenSquare, FaUser } from "react-icons/fa";
 import { isEditingOptions } from "../../containers/MyProfile/MyProfile";
 
 interface HeaderProps {
   file: any;
+  profileInf: any;
   selectImage: any;
   isEditing: null | string;
   handleSubmit(e: any): void;
@@ -21,20 +22,30 @@ const Header = ({
   handleSubmit,
   isEditing,
   setIsEditing,
+  profileInf,
 }: HeaderProps): JSX.Element => {
   return (
     <div className="myProfile-header">
       <div className="decoration-section"></div>
       <div className="myProfile-Inf">
         <div className="myProfile-image">
-          <img src={file ? file.source : "./profile.jpg"} alt="profileView" />
+          {file ? (
+            <img src={file.source} alt={"profile-pic"} />
+          ) : profileInf?.image ? (
+            <img src={profileInf.image} alt={"profile-pic"} />
+          ) : (
+            <section className="user-file-select">
+              <FaUser color="white" size={40} />
+            </section>
+          )}
+
           <FaCamera onClick={selectImage} />
         </div>
 
         <div className="myProfile-infSection">
           <h1>Nickname</h1>
           <div>
-            {isEditing === isEditingOptions.nickname ? (
+            {isEditing === isEditingOptions?.nickname ? (
               <form onSubmit={handleSubmit}>
                 <input
                   type="text"
@@ -47,9 +58,10 @@ const Header = ({
               </form>
             ) : (
               <>
-                <p>Rigoberto Antonio</p>
+                <p>{profileInf?.nickname}</p>
                 {!isEditing && (
-                  <FaPen
+                  <FaPenSquare
+                    size={10}
                     onClick={() => setIsEditing(isEditingOptions.nickname)}
                   />
                 )}
@@ -57,44 +69,47 @@ const Header = ({
             )}
           </div>
 
-          <h1 className="myProfile-description-label">Description</h1>
+          {profileInf?.description && (
+            <h1 className="myProfile-description-label">Description</h1>
+          )}
           <div className="myProfile-description">
-            {isEditing === isEditingOptions.description ? (
-              <form>
-                <textarea
-                  rows={3}
-                  cols={55}
-                  autoFocus
-                  spellCheck="false"
-                  onChange={handleChange}
-                  required
-                ></textarea>
-                <BsX onClick={handleCloseInput} />
-              </form>
+            {profileInf?.description ? (
+              isEditing === isEditingOptions.description ? (
+                <form>
+                  <textarea
+                    rows={3}
+                    cols={55}
+                    autoFocus
+                    spellCheck="false"
+                    onChange={handleChange}
+                    required
+                  ></textarea>
+                  <BsX onClick={handleCloseInput} />
+                </form>
+              ) : (
+                <>
+                  <p>{profileInf?.description}</p>
+                  {!isEditing && (
+                    <FaPenSquare
+                      size={10}
+                      onClick={() => setIsEditing(isEditingOptions.description)}
+                    />
+                  )}
+                </>
+              )
             ) : (
-              <>
-                <p>
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Autem dicta omnis maxime quae in atque libero et dolor,
-                  voluptates corrupti quis, voluptas ullam nobis!
-                </p>
-                {!isEditing && (
-                  <FaPen
-                    onClick={() => setIsEditing(isEditingOptions.description)}
-                  />
-                )}
-              </>
+              <button className="addDescription-button">Add Description</button>
             )}
           </div>
 
           <div className="myProfile-followers-section">
             <div>
               <p>Followers</p>
-              <h1>234</h1>
+              <h1>{profileInf?.followers.length}</h1>
             </div>
             <div>
               <p>Following</p>
-              <h1>56</h1>
+              <h1>{profileInf?.following.length}</h1>
             </div>
           </div>
         </div>
