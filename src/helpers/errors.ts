@@ -39,7 +39,6 @@ export const addProductErrors = {
 export const myProfileErrors = {
   requestError: "Hubo un error",
   nicknameLong: "Tu nuevo nickname es demasiado largo",
-  descritptionLong: "Tu nueva descripcion es muy larga",
 };
 
 export const searchErrors = {

@@ -69,6 +69,24 @@ const AddProduct = (): JSX.Element => {
     }
   };
 
+  //FUNCION PARA ELIMINAR CATEGORIA DEL STATE DE CATEGORIAS
+  const deleteCategory = (e: any): any => {
+    const newCategories = categories.filter(
+      (category: string) => category !== e.target.id
+    );
+
+    setCategories(newCategories);
+  };
+
+  //FUNCION PARA PERMITIR AL USUARIO SELECCIONAR IMAGENES
+  const selectImage = (): void => {
+    selectFile({ multiple: true, accept: "image/*" }, (file: any): void => {
+      //SI LA IMAGEN TIENE MAS DE 10MB MUESTRA UN ERROR
+      if (file[0].size / 1048576 < 10) setImages(file);
+      else mostrarError(addProductErrors.imageToBig, setFormError);
+    });
+  };
+
   const onSubmit = async (data: AddProductData) => {
     //INSTRODUCIR LAS CATEGORIAS Y LAS IMAGENES EN EL FORMULARIO
     if (auth.currentUser?.uid) {
@@ -133,24 +151,6 @@ const AddProduct = (): JSX.Element => {
         )
         .finally(() => setLoading(false));
     }
-  };
-
-  //FUNCION PARA ELIMINAR CATEGORIA DEL STATE DE CATEGORIAS
-  const deleteCategory = (e: any): any => {
-    const newCategories = categories.filter(
-      (category: string) => category !== e.target.id
-    );
-
-    setCategories(newCategories);
-  };
-
-  //FUNCION PARA PERMITIR AL USUARIO SELECCIONAR IMAGENES
-  const selectImage = (): void => {
-    selectFile({ multiple: true, accept: "image/*" }, (file: any): void => {
-      //SI LA IMAGEN TIENE MAS DE 10MB MUESTRA UN ERROR
-      if (file[0].size / 1048576 < 10) setImages(file);
-      else mostrarError(addProductErrors.imageToBig, setFormError);
-    });
   };
 
   return (

@@ -13,7 +13,7 @@ const NavBar = (): JSX.Element => {
   return (
     <div className="navBar">
       <a href="/">
-        <img src={"./commerce-logo.png"} alt="cuba-commerce-logo" />
+        <img src="./commerce-logo.png" alt="cuba-commerce-logo" />
       </a>
 
       <div>
@@ -79,13 +79,13 @@ const ProfileNavBar = (): JSX.Element => {
   const navigate = useNavigate();
   return (
     <div className="profile-photo-options">
-      <a href={`/profile/${auth.currentUser?.uid}`} className="photo-option">
+      <a href={`/myProfile/${auth.currentUser?.uid}`} className="photo-option">
         <p>Edit Profile</p>
         <BsGear size={20} />
       </a>
 
       <a
-        href={`/profile/${auth.currentUser?.uid}`}
+        href={`/`}
         className="photo-option"
         onClick={() => {
           auth.signOut().then(() => navigate("/"));

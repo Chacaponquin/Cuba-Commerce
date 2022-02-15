@@ -28,7 +28,6 @@ export type UsersInfo = {
   image?: string;
   id: string;
   nickname: string;
-  description?: string;
 };
 
 export type SearchParams = {

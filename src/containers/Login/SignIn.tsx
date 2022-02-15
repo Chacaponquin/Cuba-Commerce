@@ -4,11 +4,11 @@ import { SignInData } from "../../helpers/types";
 import { useLoading, Bars } from "@agney/react-loading";
 import { auth } from "../../firebase/client";
 import { Authentication, Error } from "../../components";
-import "./signIn.css";
-import "../SignUp/signUp.css";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { mostrarError, signInErrors } from "../../helpers/errors";
 import { useNavigate } from "react-router";
+import "./signIn.css";
+import "../SignUp/signUp.css";
 
 const SignIn = (): JSX.Element => {
   const navigate = useNavigate();

@@ -32,7 +32,7 @@ const Header = ({
           {file ? (
             <img src={file.source} alt={"profile-pic"} />
           ) : profileInf?.image ? (
-            <img src={profileInf.image} alt={"profile-pic"} />
+            <img src={profileInf.image} alt={profileInf?.nickname} />
           ) : (
             <section className="user-file-select">
               <FaUser color="white" size={40} />
@@ -43,63 +43,32 @@ const Header = ({
         </div>
 
         <div className="myProfile-infSection">
-          <h1>Nickname</h1>
-          <div>
-            {isEditing === isEditingOptions?.nickname ? (
-              <form onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  autoFocus
-                  spellCheck="false"
-                  onChange={handleChange}
-                  required
-                />
-                <BsX onClick={handleCloseInput} />
-              </form>
-            ) : (
-              <>
-                <p>{profileInf?.nickname}</p>
-                {!isEditing && (
-                  <FaPenSquare
-                    size={10}
-                    onClick={() => setIsEditing(isEditingOptions.nickname)}
-                  />
-                )}
-              </>
-            )}
-          </div>
-
-          {profileInf?.description && (
-            <h1 className="myProfile-description-label">Description</h1>
-          )}
-          <div className="myProfile-description">
-            {profileInf?.description ? (
-              isEditing === isEditingOptions.description ? (
-                <form>
-                  <textarea
-                    rows={3}
-                    cols={55}
+          <div className="myProfile-nickname-section">
+            <h1>Nickname</h1>
+            <div>
+              {isEditing === isEditingOptions?.nickname ? (
+                <form onSubmit={handleSubmit}>
+                  <input
+                    type="text"
                     autoFocus
                     spellCheck="false"
                     onChange={handleChange}
                     required
-                  ></textarea>
+                  />
                   <BsX onClick={handleCloseInput} />
                 </form>
               ) : (
                 <>
-                  <p>{profileInf?.description}</p>
+                  <p>{profileInf?.nickname}</p>
                   {!isEditing && (
                     <FaPenSquare
                       size={10}
-                      onClick={() => setIsEditing(isEditingOptions.description)}
+                      onClick={() => setIsEditing(isEditingOptions.nickname)}
                     />
                   )}
                 </>
-              )
-            ) : (
-              <button className="addDescription-button">Add Description</button>
-            )}
+              )}
+            </div>
           </div>
 
           <div className="myProfile-followers-section">

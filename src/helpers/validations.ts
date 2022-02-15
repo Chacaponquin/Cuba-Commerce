@@ -41,8 +41,6 @@ export const validationMyProfile = (
 
   if (inputField === isEditingOptions.nickname) {
     if (input.length > 35) error = myProfileErrors.nicknameLong;
-  } else {
-    if (input.length > 200) error = myProfileErrors.descritptionLong;
   }
 
   return error;
