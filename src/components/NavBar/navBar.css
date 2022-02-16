@@ -2,11 +2,11 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    padding: 5px 60px;
+    padding: 15px 60px;
 }
 
 .navBar>a>img {
-    width: 80px;
+    width: 300px;
     height: 80px;
     object-fit: cover;
     cursor: pointer;
@@ -56,7 +56,7 @@
     font-weight: 600;
     font-size: 20px;
     color: black;
-    transition: 0.4s all ease;
+    transition: 0.3s all ease;
 }
 
 .navBar>div>section a:first-child:hover {
@@ -71,6 +71,7 @@
     background-color: var(--primary-color);
     color: white;
     border: 2px solid var(--primary-color);
+    border-radius: 25px;
 }
 
 .profilePhoto {}

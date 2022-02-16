@@ -1,5 +1,12 @@
-import { collection, getDocs, limit, query, where } from "firebase/firestore";
-import React, { useEffect, Dispatch } from "react";
+import {
+  collection,
+  getDocs,
+  limit,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
+import { useEffect, Dispatch } from "react";
 import { db } from "../../firebase/client";
 
 interface HomeCategoriesProps {
@@ -18,8 +25,9 @@ const HomeCategories = ({
   useEffect(() => {
     let querySend = query(collection(db, "categories"), limit(15));
     //OBTENER LAS CATEGORIAS DE LA COLECCION DE FIREBASE
-    getDocs(querySend)
-      .then(async (querySnapshot) => {
+    onSnapshot(
+      querySend,
+      async (querySnapshot) => {
         //ANADIR A UN ARRAY TODAS LAS CATEGORIAS RECIBIDAS
         let allCategoories: any[] = [];
         querySnapshot.forEach((category) => {
@@ -46,9 +54,12 @@ const HomeCategories = ({
         }
         //PONER EN EL STATE TODAS LAS CATEORIAS CON LOS DATOS ACTUALIZADOS
         setBestCategories(allCategoories);
-      })
-      .catch((error) => console.log(error.status));
-  }, []);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }, [setBestCategories]);
 
   return (
     <div className="categories-container">

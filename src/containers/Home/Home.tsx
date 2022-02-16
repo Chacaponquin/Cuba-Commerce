@@ -2,11 +2,12 @@ import {
   collection,
   getDocs,
   limit,
+  onSnapshot,
   orderBy,
   query,
   where,
 } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   HomeCategories,
   HomeFriends,
@@ -49,8 +50,9 @@ const Home = (): JSX.Element => {
     }
 
     //OBTENER TODOS LOS PRODUCTOS DE FIREBASE
-    getDocs(initialQuery)
-      .then(async (querySnapshot) => {
+    onSnapshot(
+      initialQuery,
+      async (querySnapshot) => {
         //ARRAY CON TODOS LOS PRODUCTOS ENCONTRADOS
         let allProducts: any[] = [];
         querySnapshot.forEach((product) => {
@@ -87,9 +89,13 @@ const Home = (): JSX.Element => {
 
         //INSERTAR TODOS LOS DATOS ACTUALIZADOS EN EL STATE DE TODOS LOS PRODUCTOS
         setHomePosts(allProducts);
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+
+    setLoading(false);
   }, [selectCategory]);
 
   return (

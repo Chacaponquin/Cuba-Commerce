@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BsX } from "react-icons/bs";
 import { FaImages } from "react-icons/fa";
@@ -52,23 +52,6 @@ const AddProduct = (): JSX.Element => {
   //STATE QUE CONTIENE EL POSIBLE ERROR EN EL FORMULARIO
   const [formError, setFormError] = useState<null | string>(null);
 
-  //FUNCION PARA AÑADIR CATEGORIA AL STATE DE CATEGORIAS
-  const addCategory = (): any => {
-    const input = categoryInputRef.current?.value;
-
-    if (
-      input !== undefined &&
-      input !== "" &&
-      !categories.find((category: string) => category === input.toLowerCase())
-    ) {
-      setCategories([...categories, input.toLowerCase()]);
-
-      if (categoryInputRef.current) categoryInputRef.current.value = "";
-    } else {
-      if (categoryInputRef.current) categoryInputRef.current.value = "";
-    }
-  };
-
   //FUNCION PARA ELIMINAR CATEGORIA DEL STATE DE CATEGORIAS
   const deleteCategory = (e: any): any => {
     const newCategories = categories.filter(
@@ -96,6 +79,7 @@ const AddProduct = (): JSX.Element => {
       data.visits = 0;
       data.creatorID = auth.currentUser?.uid;
       data.id = String(Date.now());
+      data.sold = false;
     }
 
     //VERIFICAR SI EXISTE ALGUN ERROR EN EL FORMULARIO
@@ -109,7 +93,7 @@ const AddProduct = (): JSX.Element => {
       setLoading(true);
 
       //CREAR LA REFERENCIA DONDE SE UBICAN LOS PRODUCTOS EN FIREBASE
-      const collectionRef = doc(db, "products", data.name);
+      const collectionRef = doc(db, "products", data.id);
 
       //SE REALIZA UN BUCLE PARA CADA ELEMENTO DEL ARRAY DE LAS CATEGORIAS
       for (let i = 0; i < data.categories.length; i++) {
@@ -228,7 +212,7 @@ const AddProduct = (): JSX.Element => {
 
             <CategoryInputSection
               categoryInputRef={categoryInputRef}
-              addCategory={addCategory}
+              setCategories={setCategories}
               deleteCategory={deleteCategory}
               categories={categories}
             />
@@ -244,15 +228,15 @@ const AddProduct = (): JSX.Element => {
 //INTERFACE DE LOS PROPS DEL COMPONENTE CATEGORYINPUTPROPS
 interface CategoryInputProps {
   categories: string[];
-  addCategory: any;
-  deleteCategory: any;
+  setCategories: Dispatch<string[]>;
+  deleteCategory(e: any): any;
   categoryInputRef: any;
 }
 
 const CategoryInputSection = ({
-  categories,
-  addCategory,
+  setCategories,
   deleteCategory,
+  categories,
   categoryInputRef,
 }: CategoryInputProps): JSX.Element => {
   //STATE DE LA ALTURA DE EL CONTENEDOR DE TODAS LAS CATEGORIAS ENCONTRADAS
@@ -260,6 +244,7 @@ const CategoryInputSection = ({
     document.querySelector(".category-search-result")?.clientHeight
   );
 
+  //STATE CON EL VALOR DEL INPUT DE CATEGORIAS
   const [inputSearch, setInputSearch] = useState<string>("");
 
   //STATE CON TODAS LAS CATEGORIAS ENCONTRADAS
@@ -285,6 +270,26 @@ const CategoryInputSection = ({
         setCategoriesFound(allCategories);
       })
       .catch((error) => console.log(error));
+  };
+
+  //FUNCION PARA AÑADIR CATEGORIA AL STATE DE CATEGORIAS
+  const addCategory = (): any => {
+    const input = categoryInputRef.current?.value;
+
+    if (
+      input !== undefined &&
+      input !== "" &&
+      !categories.find((category: string) => category === input.toLowerCase())
+    ) {
+      setCategories([...categories, input.toLowerCase()]);
+
+      if (categoryInputRef.current) categoryInputRef.current.value = "";
+
+      //VACIAR EL BLOQUE DE CATEGORIAS SIMILARES
+      setCategoriesFound([]);
+    } else {
+      if (categoryInputRef.current) categoryInputRef.current.value = "";
+    }
   };
 
   //USEEFFECT PARA CAMBIAR EL TAMAÑO DEL CONTENEDOR DE CATEGORIAS

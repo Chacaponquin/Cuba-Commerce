@@ -20,6 +20,7 @@ export type AddProductData = {
   images: any[];
   visits: number;
   creatorID: string;
+  sold: boolean;
 };
 
 export type UsersInfo = {

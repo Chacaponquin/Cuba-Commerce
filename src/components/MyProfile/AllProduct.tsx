@@ -2,14 +2,16 @@ import { Bars } from "@agney/react-loading";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { BsX } from "react-icons/bs";
+import { FaCheck } from "react-icons/fa";
 import { db } from "../../firebase/client";
 import { AddProductData } from "../../helpers/types";
 
 interface AllProdcuts {
   id: string | undefined;
+  handleDeleteProduct(id: string): any;
 }
 
-const AllProduct = ({ id }: AllProdcuts): JSX.Element => {
+const AllProduct = ({ id, handleDeleteProduct }: AllProdcuts): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
   const [allProducts, setAllProducts] = useState<any[]>([]);
 
@@ -28,7 +30,7 @@ const AllProduct = ({ id }: AllProdcuts): JSX.Element => {
       })
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
-  }, []);
+  }, [id]);
 
   return (
     <div className="allProducts-section">
@@ -46,9 +48,15 @@ const AllProduct = ({ id }: AllProdcuts): JSX.Element => {
                 <img src={product.images[0]} alt={product.name} />
                 <p>{product.name}</p>
 
-                <div className="eliminate-button">
-                  <p>Eliminar</p>
-                  <BsX size={20} />
+                <div className="myProfile-product-buttons">
+                  <button>
+                    Sold
+                    <FaCheck />
+                  </button>
+                  <button onClick={handleDeleteProduct(product.id)}>
+                    Eliminar
+                    <BsX />
+                  </button>
                 </div>
               </div>
             ))

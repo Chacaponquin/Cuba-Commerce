@@ -13,7 +13,7 @@ const NavBar = (): JSX.Element => {
   return (
     <div className="navBar">
       <a href="/">
-        <img src="./commerce-logo.png" alt="cuba-commerce-logo" />
+        <img src="./images/NavBar-logo.png" alt="cuba-commerce-logo" />
       </a>
 
       <div>
@@ -33,8 +33,8 @@ const NavBar = (): JSX.Element => {
           </>
         ) : (
           <section>
-            <a href="/signIn">SignIn</a>
-            <a href="/signUp">SignUp</a>
+            <a href="/signIn">Sign In</a>
+            <a href="/signUp">Sign Up</a>
           </section>
         )}
       </div>

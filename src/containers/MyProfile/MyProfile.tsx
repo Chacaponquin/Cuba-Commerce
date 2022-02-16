@@ -2,6 +2,7 @@ import { Bars } from "@agney/react-loading";
 import { updateProfile } from "firebase/auth";
 import {
   collection,
+  deleteDoc,
   doc,
   getDocs,
   query,
@@ -109,8 +110,6 @@ const MyProfile = (): JSX.Element => {
                 await updateProfile(auth.currentUser, {
                   displayName: inputValue,
                 });
-
-                console.log("Hola");
               }
             })
             .catch((error) => setInputError(myProfileErrors.requestError));
@@ -119,6 +118,19 @@ const MyProfile = (): JSX.Element => {
     }
 
     setIsEditing(null);
+  };
+
+  //FUNCION PARA ELIMINAR UN PRODUCTO
+  const handleDeleteProduct = (id: string): void => {
+    //CREAR LA REFERENCIA DEL PRODUCTO
+    const productRef = doc(db, "products", id);
+    //ELIMINAR PRODUCTO
+    deleteDoc(productRef)
+      .then(() => {})
+      .catch((error) => {
+        console.log(error);
+        setInputError(myProfileErrors.requestError);
+      });
   };
 
   //FUNCION PARA ACTUALIZAR LO QUE SE ESCRIB EN EL INPUT
@@ -186,7 +198,7 @@ const MyProfile = (): JSX.Element => {
           profileInf={profileInf}
         />
 
-        <AllProduct id={id} />
+        <AllProduct id={id} handleDeleteProduct={handleDeleteProduct} />
       </div>
     </>
   );

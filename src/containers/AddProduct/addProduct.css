@@ -199,7 +199,8 @@
 
 .addProduct-loading {
     border-radius: 10px;
-    width: 100%;
+    width: 100vw;
+    height: max-content;
     display: flex;
     justify-content: center;
     margin-bottom: 20px;

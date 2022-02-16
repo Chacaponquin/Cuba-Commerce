@@ -59,7 +59,7 @@ const SignIn = (): JSX.Element => {
           />
         )}
 
-        <img src="./commerce-logo.png" alt="commerce-logo" />
+        <img src="./images/Login-logo.png" alt="commerce-logo" />
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <label htmlFor="">Email</label>

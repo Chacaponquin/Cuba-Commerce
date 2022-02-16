@@ -1,11 +1,12 @@
 * {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     padding: 0;
     margin: 0;
     box-sizing: border-box;
 }
 
 :root {
-    --primary-color: #DD33BB;
-    --secondary-color: #0099FF;
+    --primary-color: #dd33bb;
+    --secondary-color: #0099ff;
+    --third-color: #1dd1a1;
 }
