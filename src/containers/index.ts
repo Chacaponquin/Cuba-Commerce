@@ -5,4 +5,5 @@ export { default as AddProduct } from "./AddProduct/AddProduct";
 export { default as MyProfile } from "./MyProfile/MyProfile";
 export { default as Search } from "./Search/Search";
 export { default as Product } from "./Product/Product";
+export { default as Profile } from "./Profile/Profile";
 export { default as Error404 } from "./Error404/Error404";

@@ -82,6 +82,8 @@ const AddProduct = (): JSX.Element => {
       data.sold = false;
     }
 
+    console.log(data.id);
+
     //VERIFICAR SI EXISTE ALGUN ERROR EN EL FORMULARIO
     const error: null | string = validationAddProduct(data);
 

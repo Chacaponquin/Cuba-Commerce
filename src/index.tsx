@@ -7,6 +7,7 @@ import {
   Home,
   MyProfile,
   Product,
+  Profile,
   Search,
   SignIn,
   SignUp,
@@ -25,6 +26,7 @@ ReactDOM.render(
         <Route path="/myProfile/:id" element={<MyProfile />} />
         <Route path="/search" element={<Search />} />
         <Route path="/product/:productID" element={<Product />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   </React.StrictMode>,
