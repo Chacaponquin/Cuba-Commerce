@@ -1,8 +1,8 @@
-import { Bars } from "@agney/react-loading";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { BsX } from "react-icons/bs";
 import { FaCheck } from "react-icons/fa";
+import { ProfileLoading } from "..";
 import { db } from "../../firebase/client";
 import { AddProductData } from "../../helpers/types";
 
@@ -37,9 +37,7 @@ const AllProduct = ({ id, handleDeleteProduct }: AllProdcuts): JSX.Element => {
       <h1>All Products</h1>
 
       {loading ? (
-        <div className="myProfile-loading">
-          <Bars />
-        </div>
+        <ProfileLoading />
       ) : (
         <div className="myProfile-allProducts">
           {allProducts.length ? (

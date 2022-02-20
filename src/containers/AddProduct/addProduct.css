@@ -184,10 +184,6 @@
     color: white;
 }
 
-.addProduct-error-position {
-    right: 20px;
-}
-
 .addProduct-form-error {
     border: 3px solid var(--primary-color) !important;
 }

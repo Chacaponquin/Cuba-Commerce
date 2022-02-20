@@ -156,7 +156,7 @@ const AddProduct = (): JSX.Element => {
       {formError && (
         <Error
           error={formError}
-          position="addProduct-error-position"
+          position="right-error-position"
           setFormError={setFormError}
         />
       )}

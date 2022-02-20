@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BsGear } from "react-icons/bs";
+import { BsGear, BsMailbox, BsX } from "react-icons/bs";
 import { FaSearch, FaPlus, FaUser, FaDoorClosed } from "react-icons/fa";
 import { useNavigate } from "react-router";
 import { auth } from "../../firebase/client";
@@ -17,6 +17,8 @@ const NavBar = (): JSX.Element => {
       </a>
 
       <div>
+        <MailNotifications />
+
         {auth.currentUser && (
           <a href="/search" className="search-icon">
             <FaSearch size={30} />
@@ -43,8 +45,9 @@ const NavBar = (): JSX.Element => {
 };
 
 const ProfilePhoto = ({ profile }: ProfilePicture): JSX.Element => {
+  //EXTRAER LA FOTO DEL OBJETO USUARIO
   const picture = profile.photoURL;
-
+  //STATE PARA VER SI ESTAN ABIERTAS LAS OPCIONES
   const [optionsOpen, setOptionsOpen] = useState<boolean>(false);
 
   return (
@@ -57,7 +60,7 @@ const ProfilePhoto = ({ profile }: ProfilePicture): JSX.Element => {
             onClick={() => setOptionsOpen(!optionsOpen)}
           />
 
-          {optionsOpen && <ProfileNavBar />}
+          {optionsOpen && <ProfileOptions />}
         </section>
       ) : (
         <section>
@@ -68,15 +71,16 @@ const ProfilePhoto = ({ profile }: ProfilePicture): JSX.Element => {
             <FaUser color="white" size={25} />
           </div>
 
-          {optionsOpen && <ProfileNavBar />}
+          {optionsOpen && <ProfileOptions />}
         </section>
       )}
     </div>
   );
 };
 
-const ProfileNavBar = (): JSX.Element => {
+const ProfileOptions = (): JSX.Element => {
   const navigate = useNavigate();
+
   return (
     <div className="profile-photo-options">
       <a href={`/myProfile/${auth.currentUser?.uid}`} className="photo-option">
@@ -95,6 +99,38 @@ const ProfileNavBar = (): JSX.Element => {
         <FaDoorClosed size={20} />
       </a>
     </div>
+  );
+};
+
+const MailNotifications = (): JSX.Element => {
+  //STATE QUE INDICA SI ESTAN ABIERTAS LAS NOTIFICACIONES
+  const [notificationsOpen, setNotificationsOpen] = useState<boolean>(false);
+
+  //FUNCION PARA ELIMINAR UNA NOTIFICACION
+  const hanldeDeleteNotification = () => {
+    console.log(auth.currentUser?.uid);
+  };
+
+  return (
+    <section
+      className={`navBar-mail-notifications ${
+        notificationsOpen ? "notification-open" : "notification-close"
+      }`}
+    >
+      <BsMailbox
+        size={40}
+        onClick={() => setNotificationsOpen(!notificationsOpen)}
+      />
+
+      {notificationsOpen && (
+        <div className="mail-notifications">
+          <div>
+            <p>A Patricio le interesa el producto Audifonos</p>
+            <BsX size={25} onClick={hanldeDeleteNotification} />
+          </div>
+        </div>
+      )}
+    </section>
   );
 };
 

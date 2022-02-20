@@ -5,6 +5,10 @@
     box-sizing: border-box;
 }
 
+.right-error-position {
+    right: 20px;
+}
+
 :root {
     --primary-color: #dd33bb;
     --secondary-color: #0099ff;

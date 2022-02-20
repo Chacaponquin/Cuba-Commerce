@@ -5,6 +5,7 @@ import {
   myProfileErrors,
   signUpErrors,
   searchErrors,
+  profileErrors,
 } from "./errors";
 
 export const validateSignUp = (form: SignUpData): string | null => {
@@ -57,6 +58,14 @@ export const validateSearch = (searchParams: SearchParams): null | string => {
   } else if (priceMin) {
     if (priceMin < 0) error = searchErrors.priceNegative;
   }
+
+  return error;
+};
+
+export const validateProfileMessage = (message: string): null | string => {
+  let error = null;
+
+  if (message.length > 200) error = profileErrors.messageToLong;
 
   return error;
 };

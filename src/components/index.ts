@@ -8,6 +8,7 @@ export { default as Error } from "./Login/Error";
 
 export { default as Header } from "./MyProfile/Header";
 export { default as AllProduct } from "./MyProfile/AllProduct";
+export { default as ProfileLoading } from "./MyProfile/ProfileLoading";
 
 export { default as SearchHeader } from "./Search/Header";
 export { default as SearchOptions } from "./Search/Options";

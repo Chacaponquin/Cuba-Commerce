@@ -45,3 +45,8 @@ export const searchErrors = {
   priceError: "El precio minimo no puede ser mayor al maximo",
   priceNegative: "Ningun precio puede ser negativo",
 };
+
+export const profileErrors = {
+  requestError: "Hubo un error",
+  messageToLong: "El mensaje es demasiado largo",
+};

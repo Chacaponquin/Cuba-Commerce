@@ -74,8 +74,6 @@
     border-radius: 25px;
 }
 
-.profilePhoto {}
-
 .profilePhoto section {
     display: flex;
     flex-direction: column;
@@ -146,4 +144,57 @@
 .photo-option:hover {
     fill: var(--primary-color);
     color: var(--primary-color);
+}
+
+.navBar-mail-notifications {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.notification-open {
+    fill: var(--secondary-color);
+}
+
+.notification-close {
+    fill: black;
+}
+
+.navBar-mail-notifications>svg {
+    fill: inherit;
+    transition: 0.3s ease all;
+}
+
+.mail-notifications {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 3px 3px 8px;
+    border-radius: 15px;
+    position: absolute;
+    background-color: white;
+    transform: translateY(50px);
+}
+
+.mail-notifications>div {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    transition: 0.3s ease all;
+    cursor: pointer;
+    border-radius: 15px;
+}
+
+.mail-notifications>div:hover {
+    background-color: whitesmoke;
+}
+
+.mail-notifications>div>p {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.mail-notifications>div>svg {
+    margin-left: 15px;
+    position: relative;
+    top: 1px;
 }
