@@ -78,11 +78,9 @@ const AddProduct = (): JSX.Element => {
       data.images = images;
       data.visits = 0;
       data.creatorID = auth.currentUser?.uid;
-      data.id = String(Date.now());
+      data.id = `${auth.currentUser.uid}${Date.now()}`;
       data.sold = false;
     }
-
-    console.log(data.id);
 
     //VERIFICAR SI EXISTE ALGUN ERROR EN EL FORMULARIO
     const error: null | string = validationAddProduct(data);

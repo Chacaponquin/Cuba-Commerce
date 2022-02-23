@@ -9,7 +9,6 @@ export type SignUpData = {
   confirmPassword: string;
   email: string;
   image?: any;
-  messages: string[];
 };
 
 export type AddProductData = {
@@ -30,6 +29,7 @@ export type UsersInfo = {
   image?: string;
   id: string;
   nickname: string;
+  messages: string[];
 };
 
 export type SearchParams = {
@@ -44,5 +44,6 @@ export type MessageData = {
   id: string;
   profileTo: string;
   message: string;
+  messageNotification: string;
   profileOwner: string;
 };

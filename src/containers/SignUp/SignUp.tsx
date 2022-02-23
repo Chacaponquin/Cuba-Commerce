@@ -65,6 +65,7 @@ const SignUp = (): JSX.Element => {
             following: [],
             id: userCredentials.user.uid,
             nickname: data.nickname,
+            messages: [],
           };
 
           //SI SE INSERTO UNA IMAGEN SE REALIZAN LAS ACCIONES PARA SUBIR LA FOTO Y GUARDAR LA URL

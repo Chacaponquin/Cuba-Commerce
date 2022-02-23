@@ -1,22 +1,22 @@
-import { Bars } from "@agney/react-loading";
-import { useState, Dispatch, useEffect } from "react";
-import { BsCardText, BsX } from "react-icons/bs";
+import { useState, useEffect } from "react";
 import { FaCheck, FaPlus } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router";
 import { NavBar, ProfileLoading } from "../../components";
-import { auth } from "../../firebase/client";
-import { MessageData } from "../../helpers/types";
+import { auth, db } from "../../firebase/client";
+import { AddProductData } from "../../helpers/types";
 import { Error } from "../../components";
+import {
+  arrayRemove,
+  arrayUnion,
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { mostrarError, profileErrors } from "../../helpers/errors";
 import "./profile.css";
-import { validateProfileMessage } from "../../helpers/validations";
-import { mostrarError } from "../../helpers/errors";
-
-interface SendMessageProps {
-  handleSendMessage(): any;
-  setMessageOpen: Dispatch<boolean>;
-  setMessage: Dispatch<string>;
-  loading: boolean;
-}
 
 const Profile = (): JSX.Element => {
   //EXTRAER EL ID DEL USUARIO DE LA RUTA
@@ -24,48 +24,79 @@ const Profile = (): JSX.Element => {
   const navigate = useNavigate();
   //STATE PARA SABER SI SE SIGUE AL USUARIO
   const [follow, setFollow] = useState<boolean>(false);
-  //STATE PARA SABER SI SE ESTA REDACTANDO UN MENSAJE
-  const [messageOpen, setMessageOpen] = useState<boolean>(false);
-  //STATE DEL LOADING CUANDO SE ESTA ENVIANDO UN MENSAJE
-  const [messageLoading, setMessageLoading] = useState<boolean>(false);
   //STATE DEL LOADING CUANDO SE ESTAN OBTENIENDO LOS PRODUCTOS
   const [productLoading, setProductLoading] = useState<boolean>(false);
-  //STATE QUE CONTIENE EL MENSAJE A ENVIAR
-  const [message, setMessage] = useState("");
   //STATE DE ERROR
   const [error, setError] = useState<null | string>(null);
   //STATE CON LA INFORMACION DEL USUARIO
   const [profileInf, setProfileInf] = useState<null | any>(null);
+  const [profileProducts, setProfileProducts] = useState<any[]>([]);
 
   //FUNCION PARA SEGUIR AL USUARIO
-  const handleFollow = () => {
-    setFollow(!follow);
-  };
+  const handleDecideFollow = async () => {
+    if (id && auth.currentUser?.uid) {
+      updateDoc(doc(db, "users", id), {
+        followers: follow
+          ? arrayRemove(auth.currentUser.uid)
+          : arrayUnion(auth.currentUser.uid),
+      })
+        .then(() => {
+          if (auth.currentUser?.uid) {
+            updateDoc(doc(db, "users", auth.currentUser.uid), {
+              following: follow ? arrayRemove(id) : arrayUnion(id),
+            });
 
-  //FUNCION PARA ENVIAR UN MENSAJE AL USUARIO
-  const handleSendMessage = () => {
-    const error = validateProfileMessage(message);
-    if (error) mostrarError(error, setError);
-    else {
-      if (id && auth.currentUser) {
-        const newMessage: MessageData = {
-          id: `${Date.now}${id}`,
-          profileTo: id,
-          profileOwner: auth.currentUser.uid,
-          message: message,
-        };
-
-        console.log(newMessage);
-
-        //REDIRECCIONAR AL HOME
-        navigate("/");
-      }
+            setFollow(!follow);
+          }
+        })
+        .catch((error) => mostrarError(profileErrors.requestError, setError));
     }
   };
 
-  /*useEffect(() => {
+  const followFunction = (id: string) => {};
+
+  useEffect(() => {
+    //SI NO EXISTE ID EN LA RUTA SE REDIRECCIONA A ERROR 404
     if (!id) navigate("/notFound");
-  }, [id]);*/
+    else {
+      //CREAR LA QUERY DEL USUARIO
+      const profileQuery = query(
+        collection(db, "users"),
+        where("id", "==", id)
+      );
+      //OBTENER LOS DATOS DEL PERFIL
+      getDocs(profileQuery).then((querySnapshot) => {
+        querySnapshot.forEach((profile) => {
+          const profileFound = profile.data();
+          setProfileInf(profileFound);
+
+          //VERIFICAR SI SE SIGUE AL USUARIO
+          const checkFollow = profileFound.followers.find(
+            (el: string) => el === auth.currentUser?.uid
+          );
+          if (checkFollow) setFollow(true);
+        });
+      });
+
+      //CAMBIAR EL STATE DE LOADING A TRUE
+      setProductLoading(true);
+      //CREAR LA QUERY DE LOS PRODUCTOS DEL USUARIO
+      const productsQuery = query(
+        collection(db, "products"),
+        where("creatorID", "==", id)
+      );
+      //OBTENER TODOS LOS PRODUCTOS
+      let allProducts: any[] = [];
+      getDocs(productsQuery)
+        .then((querySnapshot) => {
+          querySnapshot.forEach((product) => allProducts.push(product.data()));
+
+          setProfileProducts(allProducts);
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setProductLoading(false));
+    }
+  }, [id, navigate]);
 
   return (
     <>
@@ -79,29 +110,15 @@ const Profile = (): JSX.Element => {
           />
         )}
 
-        {messageOpen && (
-          <SendMessageContainer
-            handleSendMessage={handleSendMessage}
-            setMessageOpen={setMessageOpen}
-            loading={messageLoading}
-            setMessage={setMessage}
-          />
-        )}
-
         <div className="profile-header">
           <section className="profile-header-left">
-            <img src="./profile.jpg" alt="" />
-            <p>Pedro Antonio</p>
+            <img src={profileInf?.image} alt={profileInf?.nickname} />
+            <p>{profileInf?.nickname}</p>
           </section>
 
           <section className="profile-header-right">
-            <button onClick={() => setMessageOpen(true)}>
-              <BsCardText size={25} />
-              Message
-            </button>
-
             <button
-              onClick={handleFollow}
+              onClick={handleDecideFollow}
               className={`${follow ? "follow-check" : "follow-uncheck"}`}
             >
               {follow ? <FaCheck size={20} /> : <FaPlus size={25} />}
@@ -112,56 +129,30 @@ const Profile = (): JSX.Element => {
 
         <div className="profile-products">
           <h1>All Products</h1>
-          {productLoading ? <ProfileLoading /> : <ProfileProducts />}
+          {productLoading ? (
+            <ProfileLoading />
+          ) : (
+            <ProfileProducts products={profileProducts} />
+          )}
         </div>
       </div>
     </>
   );
 };
 
-const ProfileProducts = (): JSX.Element => {
+interface ProfileProductsProps {
+  products: any[];
+}
+
+const ProfileProducts = ({ products }: ProfileProductsProps): JSX.Element => {
   return (
     <section className="profile-allProducts">
-      <div style={{ backgroundImage: "url('./product.jpg')" }}>
-        <h1>$235</h1>
-      </div>
-
-      <div style={{ backgroundImage: "url('./product.jpg')" }}></div>
-
-      <div style={{ backgroundImage: "url('./product.jpg')" }}></div>
-    </section>
-  );
-};
-
-const SendMessageContainer = ({
-  handleSendMessage,
-  setMessageOpen,
-  setMessage,
-  loading,
-}: SendMessageProps): JSX.Element => {
-  return (
-    <div className="sendMessage-container">
-      <section className="sendMessage-input">
-        <h1>
-          Para: Patricio Adalberto{" "}
-          <BsX size={40} onClick={() => setMessageOpen(false)} />
-        </h1>
-        <textarea
-          required
-          cols={70}
-          rows={5}
-          placeholder="Message..."
-          onChange={(e) => setMessage(e.target.value)}
-        ></textarea>
-        <div>
-          {loading ? (
-            <Bars />
-          ) : (
-            <button onClick={handleSendMessage}>Send</button>
-          )}
+      {products.map((product: AddProductData, i: number) => (
+        <div key={i} style={{ backgroundImage: `url(${product?.images[0]})` }}>
+          <h1>${product?.price}</h1>
         </div>
-      </section>
-    </div>
+      ))}
+    </section>
   );
 };
 

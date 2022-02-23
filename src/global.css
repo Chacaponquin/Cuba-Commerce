@@ -9,6 +9,11 @@
     right: 20px;
 }
 
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
 :root {
     --primary-color: #dd33bb;
     --secondary-color: #0099ff;

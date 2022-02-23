@@ -63,8 +63,6 @@
     min-height: 100vh;
 }
 
-.home-friends {}
-
 .profile-friend {
     display: flex;
     align-items: center;
@@ -79,7 +77,6 @@
     height: 60px;
     border-radius: 50%;
     object-fit: cover;
-    margin-right: 10px;
     object-position: center;
 }
 
@@ -87,6 +84,25 @@
     font-weight: 600;
     font-size: 16px;
     color: inherit;
+}
+
+.profile-friend>section,
+.profile-friend img {
+    margin-right: 10px;
+}
+
+.profile-friend>section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    background-color: var(--secondary-color);
+    fill: white;
+    border-radius: 50%;
+}
+
+.profile-friend>section>svg {
+    fill: inherit;
 }
 
 .profile-friend:hover {

@@ -12,3 +12,5 @@ export { default as ProfileLoading } from "./MyProfile/ProfileLoading";
 
 export { default as SearchHeader } from "./Search/Header";
 export { default as SearchOptions } from "./Search/Options";
+
+export { default as SendMessageContainer } from "./SendMessage/SendMessage";

@@ -1,12 +1,26 @@
 import { Bars } from "@agney/react-loading";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router";
-import { NavBar } from "../../components";
-import { db } from "../../firebase/client";
+import { BsCardText } from "react-icons/bs";
+import { useNavigate, useParams } from "react-router";
+import { Error, NavBar, SendMessageContainer } from "../../components";
+import { auth, db } from "../../firebase/client";
+import { mostrarError, productErrors } from "../../helpers/errors";
+import { validateProfileMessage } from "../../helpers/validations";
+import { MessageData } from "../../helpers/types";
+import { Link } from "react-router-dom";
 import "./product.css";
 
 const Product = (): JSX.Element => {
+  const navigate = useNavigate();
   //EXTRAER EL ID DEL PRODUCTO DE LA RUTA
   const { productID } = useParams();
   //STATE CON EL PRODUCTO ENCONTRADO
@@ -19,6 +33,14 @@ const Product = (): JSX.Element => {
   const cont = useRef<number>(0);
   //STATE DE LA URL DE LA IMAGEN SELECCIONADA
   const [selectImage, setSelectImage] = useState<string>("");
+  //STATE DEL LOADING CUANDO SE ESTA ENVIANDO UN MENSAJE
+  const [messageLoading, setMessageLoading] = useState<boolean>(false);
+  //STATE PARA SABER SI SE ESTA REDACTANDO UN MENSAJE
+  const [messageOpen, setMessageOpen] = useState<boolean>(false);
+  //STATE QUE CONTIENE EL MENSAJE A ENVIAR
+  const [message, setMessage] = useState("");
+  //STATE DE ERROR
+  const [error, setError] = useState<null | string>(null);
 
   //USEEFFECT PARA OBTENCION DEL PRODUCTO A PARTIR DEL ID
   useEffect(() => {
@@ -56,7 +78,11 @@ const Product = (): JSX.Element => {
           //INSERTAR EN EL STATE DEL PRODUCTO ENCONTRADO LA IMAGEN Y NOMBRE DEL CREADOR
           setProductFound({
             ...productFound,
-            creatorID: { image: data.image, name: data.nickname },
+            creatorID: {
+              id: productFound.creatorID,
+              image: data.image,
+              name: data.nickname,
+            },
           });
         });
       })
@@ -75,6 +101,37 @@ const Product = (): JSX.Element => {
     }
   }, [allImages]);
 
+  //FUNCION PARA ENVIAR UN MENSAJE AL USUARIO
+  const handleSendMessage = (id: string) => {
+    const error = validateProfileMessage(message);
+    if (error) mostrarError(error, setError);
+    else {
+      if (productFound?.creatorID.id && auth.currentUser) {
+        //CONSTRUIR MENSAJE
+        const newMessage: MessageData = {
+          id: `${Date.now()}${auth.currentUser.uid}`,
+          profileTo: id,
+          profileOwner: auth.currentUser.uid,
+          message: message,
+          messageNotification: `A ${auth.currentUser.displayName} le interesa el producto ${productFound.name}`,
+        };
+
+        //CAMBIAR EL STATE DE LOADING A TRUE
+        setMessageLoading(true);
+        //ACTUALIZAR LOS MENSAJES DEL USUARIO
+        updateDoc(doc(db, "users", id), {
+          messages: arrayUnion(newMessage),
+        })
+          .then(() => {
+            //REDIRECCIONAR AL HOME
+            navigate("/");
+          })
+          .catch((error) => mostrarError(productErrors.requestError, setError))
+          .finally(() => setMessageLoading(false));
+      }
+    }
+  };
+
   //SI SE ESTA CARGANDO LA PETICION MUESTRA EL LOADING
   if (loading) {
     return (
@@ -87,7 +144,28 @@ const Product = (): JSX.Element => {
   return (
     <>
       <NavBar />
+
+      {messageOpen && (
+        <SendMessageContainer
+          handleSendMessage={handleSendMessage}
+          setMessageOpen={setMessageOpen}
+          loading={messageLoading}
+          setMessage={setMessage}
+          profile={{
+            name: productFound.creatorID.name,
+            id: productFound.creatorID.id,
+          }}
+        />
+      )}
+
       <div className="product-container">
+        {error && (
+          <Error
+            error={error}
+            setFormError={setError}
+            position="right-error-position"
+          />
+        )}
         <div className="product-header">
           <div className="product-header-inf">
             <h1>{productFound?.name}</h1>
@@ -97,11 +175,20 @@ const Product = (): JSX.Element => {
           <img src={selectImage} alt={productFound?.name} />
 
           <div className="product-header-creator">
-            <h1>{productFound?.creatorID.name}</h1>
-            <img
-              src={productFound?.creatorID.image}
-              alt={productFound?.creatorID.name}
-            />
+            <Link to={`/profile/${productFound?.creatorID.id}`}>
+              {productFound?.creatorID.image && (
+                <img
+                  src={productFound?.creatorID.image}
+                  alt={productFound?.creatorID.name}
+                />
+              )}
+              <h1>{productFound?.creatorID.name}</h1>
+            </Link>
+
+            <button onClick={() => setMessageOpen(true)}>
+              <BsCardText size={25} />
+              Message
+            </button>
           </div>
         </div>
 

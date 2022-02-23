@@ -102,7 +102,7 @@ const Home = (): JSX.Element => {
     <div className="home-container">
       <NavBar />
 
-      {!homePosts.length ? (
+      {!homePosts.length && !loading ? (
         <div className="no-connection-svg">
           <img src="./svg/no-connection.svg" alt="Hola" />
           <h1>No estas conectado</h1>

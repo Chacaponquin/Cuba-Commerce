@@ -1,5 +1,6 @@
 import { Bars } from "@agney/react-loading";
 import { Dispatch } from "react";
+import { Link } from "react-router-dom";
 
 interface HomePostsProps {
   posts: any[];
@@ -51,9 +52,9 @@ interface HomePostProps {
 const HomePost = ({ post, setSelectCategory }: HomePostProps): JSX.Element => {
   return (
     <div className="post">
-      <a href={`/product/${post.id}`}>
+      <Link to={`/product/${post.id}`}>
         <img src={post.images[0]} alt={post.name} />
-      </a>
+      </Link>
 
       <div>
         <h1>{post.name}</h1>

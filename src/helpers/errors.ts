@@ -46,6 +46,11 @@ export const searchErrors = {
   priceNegative: "Ningun precio puede ser negativo",
 };
 
+export const productErrors = {
+  requestError: "Hubo un error",
+  messageToLong: "El mensaje es demasiado largo",
+};
+
 export const profileErrors = {
   requestError: "Hubo un error",
   messageToLong: "El mensaje es demasiado largo",
