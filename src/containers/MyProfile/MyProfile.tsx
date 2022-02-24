@@ -4,16 +4,15 @@ import {
   collection,
   deleteDoc,
   doc,
-  getDocs,
+  onSnapshot,
   query,
   updateDoc,
   where,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useFileUpload } from "use-file-upload";
-import { Error404 } from "..";
 import { AllProduct, Error, Header, NavBar } from "../../components";
 import { auth, db, storage } from "../../firebase/client";
 import { mostrarError, myProfileErrors } from "../../helpers/errors";
@@ -27,27 +26,50 @@ export const isEditingOptions = {
 };
 
 const MyProfile = (): JSX.Element => {
+  const navigate = useNavigate();
   //STATE DEL LOADING
   const [loading, setLoading] = useState<boolean>(false);
-
+  //STATE DE LA IMAGEN SELECCIONADA
   const [pickImage, setPickImage] = useState<any | null>(null);
-
   //STATE CON EL PERFIL ENCONTRADO
   const [profileInf, setProfileInf] = useState<any>(null);
-  //EXTRAER EL ID A BUSCAR DE LA RUTA
-  const { id } = useParams();
-
   //STATE DE ERROR
   const [inputError, setInputError] = useState<null | string>(null);
-
   //STATE DE POSIBLE EMAGEN SUBIDA
   const [file, selectFile] = useFileUpload();
-
   //STATE QUE CONTIENE EL NOMBRE DEL INPUT QUE SE ESTA EDITANDO
   const [isEditing, setIsEditing] = useState<null | string>(null);
-
   //STATE CON EL CONTENIDO DEL INPUT
   const [inputValue, setInputValue] = useState<string>("");
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      //CAMBIAR EL STATE DE LOADING A TRUE
+      setLoading(true);
+      //CONTRUIR EL QUERY DEL PERFIL A BUSCAR
+      const profileQuery = query(
+        collection(db, "users"),
+        where("id", "==", auth.currentUser.uid)
+      );
+
+      //SNAPSHOT DE EL PERFIL
+      onSnapshot(
+        profileQuery,
+        (querySnapshot) => {
+          querySnapshot.forEach((profile) => {
+            setProfileInf(profile.data());
+          });
+
+          setLoading(false);
+        },
+        (error) => {
+          console.log(error);
+          setLoading(false);
+          navigate("/notFound");
+        }
+      );
+    }
+  }, [navigate]);
 
   //FUNCION PARA SELECCIONAR LA IMAGEN
   const selectImage = (): void => {
@@ -80,9 +102,9 @@ const MyProfile = (): JSX.Element => {
               //ACTUALIZAR EL USUARIO CON LA NUEVA IMAGEN
               await updateProfile(auth.currentUser, { photoURL: imageURL });
 
-              if (id) {
+              if (auth.currentUser.uid) {
                 //ACTUALIZAR EL USUARIO DE LA COLECCION DE USUARIOS
-                const profileRef = doc(db, "users", id);
+                const profileRef = doc(db, "users", auth.currentUser.uid);
                 await updateDoc(profileRef, { image: imageURL });
               }
             }
@@ -102,8 +124,8 @@ const MyProfile = (): JSX.Element => {
 
       if (error) mostrarError(error, setInputError);
       else {
-        if (id) {
-          const profileRef = doc(db, "users", id);
+        if (auth.currentUser) {
+          const profileRef = doc(db, "users", auth.currentUser.uid);
           updateDoc(profileRef, { nickname: inputValue })
             .then(async () => {
               if (auth.currentUser) {
@@ -133,6 +155,14 @@ const MyProfile = (): JSX.Element => {
       });
   };
 
+  //FUNCION PARA SEÑALAR LA VENTA DE UN PRODUCTO
+  const handleSoldProduct = (id: string) => {
+    const productRef = doc(db, "products", id);
+    updateDoc(productRef, { sold: true })
+      .then(() => {})
+      .catch((error) => console.log(error));
+  };
+
   //FUNCION PARA ACTUALIZAR LO QUE SE ESCRIB EN EL INPUT
   const handleChange = (e: any): void => {
     setInputValue(e.target.value);
@@ -144,25 +174,9 @@ const MyProfile = (): JSX.Element => {
     setIsEditing(null);
   };
 
-  useEffect(() => {
-    //CAMBIAR EL STATE DE LOADING A TRUE
-    setLoading(true);
-    //CONTRUIR EL QUERY DEL PERFIL A BUSCAR
-    const profileQuery = query(collection(db, "users"), where("id", "==", id));
-
-    getDocs(profileQuery)
-      .then((querySnapshot) => {
-        querySnapshot.forEach((profile) => {
-          setProfileInf(profile.data());
-        });
-      })
-      .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
-  }, [id]);
-
   //SI YA SE TERMINO DE CARGAR Y NO HAY NINGUN PERFIL SE PONE ERROR404
   if (!loading && !profileInf) {
-    return <Error404 />;
+    navigate("/notFound");
   }
 
   //SI SE ESTA CARGANDO LA INFORMACION SE MUESTRA EL LOADING
@@ -198,7 +212,11 @@ const MyProfile = (): JSX.Element => {
           profileInf={profileInf}
         />
 
-        <AllProduct id={id} handleDeleteProduct={handleDeleteProduct} />
+        <AllProduct
+          id={auth.currentUser?.uid}
+          handleDeleteProduct={handleDeleteProduct}
+          handleSoldProduct={handleSoldProduct}
+        />
       </div>
     </>
   );

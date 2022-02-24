@@ -54,4 +54,5 @@ export const productErrors = {
 export const profileErrors = {
   requestError: "Hubo un error",
   messageToLong: "El mensaje es demasiado largo",
+  noMessage: "Tienes que escribir un mensaje",
 };

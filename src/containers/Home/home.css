@@ -37,6 +37,7 @@
     color: inherit;
     font-weight: 600;
     font-size: 17px;
+    text-align: left;
 }
 
 .category p:last-child {
@@ -60,7 +61,7 @@
     justify-content: space-around;
     min-width: 65%;
     max-width: 100%;
-    min-height: 100vh;
+    height: auto;
 }
 
 .profile-friend {
@@ -129,6 +130,7 @@
 .post>a>img {
     object-fit: cover;
     max-width: 300px;
+    width: 300px;
     max-height: 250px;
     border-radius: 5px 5px 0 0;
 }
@@ -237,4 +239,58 @@
     padding: 15px 0px;
     font-size: 50px;
     color: gray;
+}
+
+@media screen and (max-width: 1000px) {
+    .home-friends {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .categories-container {
+        min-width: 25%;
+    }
+    .home-posts {
+        min-width: 75%;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .post {
+        display: flex;
+        flex-direction: row;
+        width: max-content;
+        max-width: 390px;
+        padding: 0;
+        height: max-content;
+    }
+    .post>a {
+        height: 100%;
+    }
+    .post>a>img {
+        width: 200px;
+        height: 100%;
+        border-radius: 5px 0px 0px 5px;
+        max-height: none;
+    }
+    .post>div {
+        padding: 10px 15px;
+        justify-content: center;
+        align-items: flex-start;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    .categories-container {
+        display: none;
+    }
+    .home-posts {
+        min-width: 100%;
+        flex-direction: column;
+        align-items: center;
+    }
+    .post {
+        width: 450px;
+    }
 }

@@ -14,7 +14,7 @@ import {
   HomePosts,
   NavBar,
 } from "../../components";
-import { db } from "../../firebase/client";
+import { auth, db } from "../../firebase/client";
 import "./home.css";
 
 const Home = (): JSX.Element => {
@@ -31,19 +31,28 @@ const Home = (): JSX.Element => {
   useEffect(() => {
     //CAMBIAR EL STATE DE LOADING A TRUE
     setLoading(true);
-
     //QUERY INICIAL POR DEFECTO
-    let initialQuery = query(
-      collection(db, "products"),
-      limit(20),
-      orderBy("timestamp", "desc")
-    );
+    let initialQuery;
+
+    if (auth.currentUser) {
+      initialQuery = query(
+        collection(db, "products"),
+        where("creatorID", "!=", auth.currentUser.uid),
+        limit(15)
+      );
+    } else {
+      initialQuery = query(
+        collection(db, "products"),
+        limit(15),
+        orderBy("timestamp", "desc")
+      );
+    }
 
     //SI EXISTE UNA CATEGORIA SELECCIONADA SE REALIZA LA BUSQUEDA DE PRODUCTOS QUE CONTENGAN ESA CATEGORIA
     if (selectCategory) {
       initialQuery = query(
         collection(db, "products"),
-        limit(20),
+        limit(15),
         orderBy("timestamp", "desc"),
         where("categories", "array-contains", selectCategory)
       );
@@ -55,9 +64,7 @@ const Home = (): JSX.Element => {
       async (querySnapshot) => {
         //ARRAY CON TODOS LOS PRODUCTOS ENCONTRADOS
         let allProducts: any[] = [];
-        querySnapshot.forEach((product) => {
-          allProducts.push(product.data());
-        });
+        querySnapshot.forEach((product) => allProducts.push(product.data()));
 
         //UN BUCLE PARA OBTENER LOS DATOS DE LOS CREADORES DE CADA PRODUCTO
         for (let i = 0; i < allProducts.length; i++) {
@@ -96,7 +103,7 @@ const Home = (): JSX.Element => {
     );
 
     setLoading(false);
-  }, [selectCategory]);
+  }, [selectCategory, auth.currentUser]);
 
   return (
     <div className="home-container">

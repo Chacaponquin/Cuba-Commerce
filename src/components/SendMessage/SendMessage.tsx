@@ -36,7 +36,7 @@ const SendMessageContainer = ({
           {loading ? (
             <Bars />
           ) : (
-            <button onClick={handleSendMessage(profile.id)}>Send</button>
+            <button onClick={() => handleSendMessage(profile.id)}>Send</button>
           )}
         </div>
       </section>

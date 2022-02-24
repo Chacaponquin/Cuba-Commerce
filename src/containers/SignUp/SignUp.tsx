@@ -45,6 +45,7 @@ const SignUp = (): JSX.Element => {
 
     //SI EL USUARIO INSERTO UNA IMAGEN SE GUARDA EN EL OBJETO DE LOS DATOS DEL FORM
     if (image) data.image = image.file;
+    else data.image = null;
 
     //INSERTAR EN EL STATE ERROR EL ERROR DEVUELTO POR LA FUNCION
     if (error) mostrarError(error, setFormError);
@@ -114,7 +115,7 @@ const SignUp = (): JSX.Element => {
         <Error
           error={formError}
           setFormError={setFormError}
-          position="signIn-error-position"
+          position="left-error-position"
         />
       )}
 

@@ -1,27 +1,19 @@
-import { doc, getDoc } from "firebase/firestore";
-import { useContext, useEffect, useState, Dispatch } from "react";
-import { BsGear, BsMailbox, BsX } from "react-icons/bs";
-import { FaSearch, FaPlus, FaUser, FaDoorClosed } from "react-icons/fa";
-import { useNavigate } from "react-router";
+import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { auth, db } from "../../firebase/client";
-import DarkModeToggle from "react-dark-mode-toggle";
-import { ColorContext, colors } from "../../context/ColorContext";
-import { SendMessageContainer } from "..";
+import { Error, SendMessageContainer } from "..";
+import { validateProfileMessage } from "../../helpers/validations";
+import { mostrarError, profileErrors } from "../../helpers/errors";
+import { MessageData } from "../../helpers/types";
+import ProfilePhoto from "./ProfilePhoto";
+import MailNotifications from "./MailNotifications";
 import "./navBar.css";
 
-interface ProfilePicture {
-  profile: any;
-}
-
-interface MailNotificationsProps {
-  notifications: any[];
-  handleSendMessage(id: string): any;
-  notificationsOpen: boolean;
-  setNotificationsOpen: Dispatch<boolean>;
-}
-
 const NavBar = (): JSX.Element => {
+  //STATE DE EL TAMAÑO DE LA VENTANA
+  const [windowSize, setWindowSize] = useState<number>(window.innerWidth);
   //STATE QUE INDICA SI ESTAN ABIERTAS LAS NOTIFICACIONES
   const [notificationsOpen, setNotificationsOpen] = useState<boolean>(false);
   //STATE CON TODAS LAS NOTIFICACIONES DEL USUARIO
@@ -32,8 +24,15 @@ const NavBar = (): JSX.Element => {
   const [message, setMessage] = useState<string>("");
   //STATE DE LOADING
   const [loading, setLoading] = useState<boolean>(false);
-
+  //STATE CON EL MENSAJE SELECCIONADO A RESPONDER
   const [selectNotf, setSelectNotf] = useState<null | any>(null);
+  //STATE DE ERROR
+  const [error, setError] = useState<null | string>(null);
+
+  //USEEFECT PARA SEGUN EL TAMAÑO DE LA VENTANA CAMBIAR DE IMAGEN
+  useEffect(() => {
+    window.addEventListener("resize", () => setWindowSize(window.innerWidth));
+  }, []);
 
   //USEEFECT PARA OBTENER TODAS LAS NOTIFICACIONES
   useEffect(() => {
@@ -63,13 +62,51 @@ const NavBar = (): JSX.Element => {
         })
         .catch((error) => console.log(error));
     }
-  }, []);
+  }, [auth.currentUser]);
 
-  const handleSendMessage = (id: string) => {
+  //FUNCION PARA ABRIR EL ESCRITOR DE MENSAJES
+  const handleOpenMessage = (id: string) => {
+    //ABRIR EL ESCRITOR DE MENSAJES
     setMessageOpen(true);
+    //CERRAR LAS NOTIFICACIONES
     setNotificationsOpen(false);
-    setSelectNotf(notifications[0]);
-    console.log(notifications.filter((el) => el.profileOwner.id !== id));
+    //FILTRAR LOS MENSJAES Y QUEDARSE CON LA PERSONA A LA QUE PERTENECE EL MENSAJE
+    const filtroID = notifications.filter((el) => el.profileOwner.id === id);
+
+    setSelectNotf(filtroID[0]);
+  };
+
+  //FUNCION PARA ENVIAR EL MENSAJE
+  const handleSendMessage = (id: string) => {
+    console.log(id);
+    //VER SI EXISTE ERROR EN EL MESNAJE
+    const error = validateProfileMessage(message);
+    if (error) mostrarError(error, setError);
+    else {
+      if (auth.currentUser) {
+        //CAMBIAR EL STATE DE LOADING A TRUE
+        setLoading(true);
+        //CREAR EL MENSAJE
+        const newMessage: MessageData = {
+          id: `${Date.now()}${auth.currentUser.uid}`,
+          profileTo: id,
+          profileOwner: auth.currentUser.uid,
+          message: message,
+          messageNotification: `${auth.currentUser.displayName} te ha respondido`,
+        };
+
+        //ACTUALIZAR LOS MENSAJES DEL USUARIO
+        updateDoc(doc(db, "users", id), {
+          messages: arrayUnion(newMessage),
+        })
+          .then(() => {})
+          .catch((error) => mostrarError(profileErrors.requestError, setError))
+          .finally(() => {
+            setLoading(false);
+            setMessageOpen(false);
+          });
+      }
+    }
   };
 
   return (
@@ -83,16 +120,32 @@ const NavBar = (): JSX.Element => {
           profile={selectNotf.profileOwner}
         />
       )}
+
+      {error && (
+        <Error
+          error={error}
+          setFormError={setError}
+          position="left-error-position"
+        />
+      )}
+
       <div className="navBar">
         <Link to="/">
-          <img src="./images/NavBar-logo.png" alt="cuba-commerce-logo" />
+          <img
+            src={
+              windowSize > 500
+                ? "./images/NavBar-logo.png"
+                : "./images/Logo_small.png"
+            }
+            alt="cuba-commerce-logo"
+          />
         </Link>
 
         <div>
           {auth.currentUser && (
             <MailNotifications
               notifications={notifications}
-              handleSendMessage={handleSendMessage}
+              handleOpenMessage={handleOpenMessage}
               notificationsOpen={notificationsOpen}
               setNotificationsOpen={setNotificationsOpen}
             />
@@ -115,134 +168,6 @@ const NavBar = (): JSX.Element => {
         </div>
       </div>
     </>
-  );
-};
-
-const ProfilePhoto = ({ profile }: ProfilePicture): JSX.Element => {
-  //EXTRAER LA FOTO DEL OBJETO USUARIO
-  const picture = profile.photoURL;
-  //STATE PARA VER SI ESTAN ABIERTAS LAS OPCIONES
-  const [optionsOpen, setOptionsOpen] = useState<boolean>(false);
-
-  return (
-    <div className="profilePhoto">
-      {picture ? (
-        <section>
-          <img
-            src={picture}
-            alt={profile.displayName}
-            onClick={() => setOptionsOpen(!optionsOpen)}
-          />
-
-          {optionsOpen && <ProfileOptions />}
-        </section>
-      ) : (
-        <section>
-          <div
-            className="no-picture"
-            onClick={() => setOptionsOpen(!optionsOpen)}
-          >
-            <FaUser color="white" size={25} />
-          </div>
-
-          {optionsOpen && <ProfileOptions />}
-        </section>
-      )}
-    </div>
-  );
-};
-
-const ProfileOptions = (): JSX.Element => {
-  const navigate = useNavigate();
-  //CONTEXT
-  const context = useContext(ColorContext);
-  //FUNCION PARA CAMBIAR A DARK O LIGHT MODE
-  const handleChangeMode = () => {
-    context?.setColorMode(
-      context.colorMode === colors.LIGHT ? colors.DARK : colors.LIGHT
-    );
-  };
-
-  return (
-    <div className="profile-photo-options">
-      <Link to={`/myProfile/${auth.currentUser?.uid}`} className="photo-option">
-        <p>Edit Profile</p>
-        <BsGear size={20} />
-      </Link>
-
-      <Link to="/search" className="photo-option">
-        <p>Search</p>
-        <FaSearch size={20} />
-      </Link>
-
-      <Link
-        to={`/`}
-        className="photo-option"
-        onClick={() => {
-          auth.signOut().then(() => navigate("/"));
-        }}
-      >
-        <p>Sign Out</p>
-        <FaDoorClosed size={20} />
-      </Link>
-
-      <div className="photo-option">
-        <p>Mode</p>
-        <DarkModeToggle
-          speed={1}
-          size={40}
-          checked={context?.colorMode === colors.LIGHT ? false : true}
-          onChange={handleChangeMode}
-        />
-      </div>
-    </div>
-  );
-};
-
-const MailNotifications = ({
-  notifications,
-  handleSendMessage,
-  notificationsOpen,
-  setNotificationsOpen,
-}: MailNotificationsProps): JSX.Element => {
-  //FUNCION PARA ELIMINAR UNA NOTIFICACION
-  const handleDeleteNotification = () => {
-    console.log(auth.currentUser?.uid);
-  };
-
-  return (
-    <section
-      className={`navBar-mail-notifications ${
-        notificationsOpen ? "notification-open" : "notification-close"
-      }`}
-    >
-      <BsMailbox
-        size={40}
-        onClick={() => setNotificationsOpen(!notificationsOpen)}
-      />
-
-      {notificationsOpen && (
-        <div className="mail-notifications">
-          {notifications.map((el, i: number) => (
-            <div key={i}>
-              <p>{el.messageNotification}</p>
-
-              <section>
-                <button
-                  onClick={() => {
-                    handleSendMessage(el.profileOwner.id);
-                  }}
-                >
-                  Reply
-                </button>
-
-                <BsX size={25} onClick={handleDeleteNotification} />
-              </section>
-            </div>
-          ))}
-        </div>
-      )}
-    </section>
   );
 };
 

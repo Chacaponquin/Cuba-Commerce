@@ -90,10 +90,6 @@
     z-index: 99;
 }
 
-.signIn-error-position {
-    left: 20px;
-}
-
 .error-message p {
     font-size: 20px;
     color: white;

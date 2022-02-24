@@ -9,18 +9,28 @@ import { AddProductData } from "../../helpers/types";
 interface AllProdcuts {
   id: string | undefined;
   handleDeleteProduct(id: string): any;
+  handleSoldProduct(id: string): any;
 }
 
-const AllProduct = ({ id, handleDeleteProduct }: AllProdcuts): JSX.Element => {
+const AllProduct = ({
+  id,
+  handleDeleteProduct,
+  handleSoldProduct,
+}: AllProdcuts): JSX.Element => {
+  //STATE DE LOADING
   const [loading, setLoading] = useState<boolean>(false);
+  //STATE DE TODOS LOS PRODUCTOS
   const [allProducts, setAllProducts] = useState<any[]>([]);
 
   useEffect(() => {
     setLoading(true);
-    const qy = query(collection(db, "products"), where("creatorID", "==", id));
+    const productsQuery = query(
+      collection(db, "products"),
+      where("creatorID", "==", id)
+    );
 
     let productsFound: any[] = [];
-    getDocs(qy)
+    getDocs(productsQuery)
       .then((querySnapshot) => {
         querySnapshot.forEach((product) => {
           productsFound.push(product.data());
@@ -47,11 +57,14 @@ const AllProduct = ({ id, handleDeleteProduct }: AllProdcuts): JSX.Element => {
                 <p>{product.name}</p>
 
                 <div className="myProfile-product-buttons">
-                  <button>
+                  <button
+                    className={product.sold ? "sold" : ""}
+                    onClick={() => handleSoldProduct(product.id)}
+                  >
                     Sold
                     <FaCheck />
                   </button>
-                  <button onClick={handleDeleteProduct(product.id)}>
+                  <button onClick={() => handleDeleteProduct(product.id)}>
                     Eliminar
                     <BsX />
                   </button>

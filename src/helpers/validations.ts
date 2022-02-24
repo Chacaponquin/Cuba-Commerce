@@ -66,6 +66,7 @@ export const validateProfileMessage = (message: string): null | string => {
   let error = null;
 
   if (message.length > 200) error = profileErrors.messageToLong;
+  else if (message.length === 0) error = profileErrors.noMessage;
 
   return error;
 };

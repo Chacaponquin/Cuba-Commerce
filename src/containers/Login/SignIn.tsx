@@ -55,7 +55,7 @@ const SignIn = (): JSX.Element => {
           <Error
             error={formError}
             setFormError={setFormError}
-            position="signIn-error-position"
+            position="left-error-position"
           />
         )}
 

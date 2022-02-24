@@ -5,6 +5,7 @@ import { auth, db, provider } from "../../firebase/client";
 import { signUpErrors } from "../../helpers/errors";
 import { Dispatch } from "react";
 import { doc, setDoc } from "firebase/firestore";
+import { UsersInfo } from "../../helpers/types";
 
 interface AuthenticationProps {
   setError: Dispatch<null | string>;
@@ -20,22 +21,25 @@ const Authentication = ({
   const authenticationGoogle = () => {
     signInWithPopup(auth, provider)
       .then(async (result) => {
-        //CREAR EL NUEVO OBJETO DEL PERFIL A CREAR
-        const newUser = {
-          id: result.user.uid,
-          image: result.user.photoURL,
-          following: [],
-          followers: [],
-          nickname: result.user.displayName,
-        };
+        if (result.user.displayName) {
+          //CREAR EL NUEVO OBJETO DEL PERFIL A CREAR
+          const newUser: UsersInfo = {
+            id: result.user.uid,
+            image: result.user.photoURL,
+            following: [],
+            followers: [],
+            nickname: result.user.displayName,
+            messages: [],
+          };
 
-        //REFERENCIA DE LA UBICACION DEL ARCHIVO
-        const profileRef = doc(db, "users", newUser.id);
+          //REFERENCIA DE LA UBICACION DEL ARCHIVO
+          const profileRef = doc(db, "users", newUser.id);
 
-        //SUBIR EL NUEVO ARCHIVO
-        await setDoc(profileRef, newUser);
-        //DIRECCIONAR HASTA EL HOME
-        navigate("/");
+          //SUBIR EL NUEVO ARCHIVO
+          await setDoc(profileRef, newUser);
+          //DIRECCIONAR HASTA EL HOME
+          navigate("/");
+        }
       })
       .catch((error) => {
         mostrarError(signUpErrors.requestError, setError);

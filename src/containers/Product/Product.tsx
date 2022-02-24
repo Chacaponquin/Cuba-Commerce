@@ -13,7 +13,7 @@ import { BsCardText } from "react-icons/bs";
 import { useNavigate, useParams } from "react-router";
 import { Error, NavBar, SendMessageContainer } from "../../components";
 import { auth, db } from "../../firebase/client";
-import { mostrarError, productErrors } from "../../helpers/errors";
+import { mostrarError, profileErrors } from "../../helpers/errors";
 import { validateProfileMessage } from "../../helpers/validations";
 import { MessageData } from "../../helpers/types";
 import { Link } from "react-router-dom";
@@ -126,7 +126,7 @@ const Product = (): JSX.Element => {
             //REDIRECCIONAR AL HOME
             navigate("/");
           })
-          .catch((error) => mostrarError(productErrors.requestError, setError))
+          .catch((error) => mostrarError(profileErrors.requestError, setError))
           .finally(() => setMessageLoading(false));
       }
     }

@@ -26,7 +26,7 @@ export type AddProductData = {
 export type UsersInfo = {
   followers: string[];
   following: string[];
-  image?: string;
+  image?: string | null;
   id: string;
   nickname: string;
   messages: string[];

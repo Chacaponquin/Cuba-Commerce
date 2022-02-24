@@ -11,16 +11,17 @@ const initialSearch: SearchParams = {
 };
 
 const Search = (): JSX.Element => {
+  //STATE DE ERROR
   const [error, setError] = useState<null | string>(null);
-
+  //STATE DE LOADING
   const [loading, setLoading] = useState<boolean>(true);
-
+  //REF DEL CONTENEDOR DEL RESULTADO
   const searchResultDiv = useRef<HTMLTableSectionElement>(null);
   const searchInputRef = useRef<HTMLDivElement>(null);
   const searchDivHeader = useRef<HTMLDivElement>(null);
-
+  //REDUCER DE LOS PARAMETROS DE LA BUSQUEDA
   const [searchParams, dispatch] = useReducer(searchReducer, initialSearch);
-
+  //RESULTADOS DE LA BUSQUEDA
   const [searchResult, setSearchResult] = useState<AddProductData[]>([]);
 
   //FUNCION PARA UBICAR LOS ELEMENTOS

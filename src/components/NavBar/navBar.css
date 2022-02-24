@@ -1,7 +1,7 @@
 .navBar {
     display: flex;
     justify-content: space-between;
-    width: 100vw;
+    width: 100%;
     padding: 15px 45px;
 }
 
@@ -24,15 +24,17 @@
     padding: 15px 15px;
     border-radius: 50%;
     background-color: var(--secondary-color);
+    margin-right: 20px;
+    transition: all ease 0.4s;
+    fill: white;
+}
+
+.add-product>svg {
+    fill: inherit;
 }
 
 .search-icon:hover {
     fill: var(--primary-color);
-}
-
-.add-product {
-    margin-right: 20px;
-    transition: all ease 0.4s;
 }
 
 .add-product:hover {
@@ -206,9 +208,36 @@
     cursor: pointer;
 }
 
+.mail-notifications>h1 {
+    padding: 12px 20px;
+    color: gray;
+    font-size: 20px;
+}
+
+@media screen and (max-width: 1000px) {
+    .navBar {
+        padding: 10px 40px;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .add-product {
+        padding: 10px;
+    }
+    .mail-notifications>div {
+        padding: 10px 20px;
+    }
+    .mail-notifications>div>p {
+        font-size: 14px;
+    }
+}
+
 @media screen and (max-width: 600px) {
+    .navBar {
+        padding: 10px 25px;
+    }
     .navBar>a>img {
-        width: 200px;
+        width: 150px;
         height: 60px;
     }
     .navBar>div>section a {
@@ -217,5 +246,50 @@
     }
     .navBar-mail-notifications {
         margin-right: 25px;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .navBar {
+        padding: 10px 25px;
+    }
+    .navBar>a>img {
+        width: 50px;
+    }
+    .profilePhoto img,
+    .no-picture {
+        width: 35px;
+        height: 35px;
+    }
+    .navBar-mail-notifications {
+        width: 30px;
+        height: 30px;
+    }
+    .mail-notifications {
+        transform: translateY(35px);
+    }
+    @keyframes navBarAnimation {
+        to {
+            opacity: 1;
+            transform: translateY(40px);
+        }
+    }
+    .mail-notifications>div {
+        padding: 10px 15px;
+        border-radius: 11px;
+    }
+    .mail-notifications>div>p {
+        font-size: 13px;
+    }
+    .mail-notifications>div>section>button {
+        font-size: 13px;
+        margin: 0px 10px;
+    }
+    .add-product {
+        padding: 10px;
+    }
+    .add-product>svg {
+        width: 15px;
+        height: 15px;
     }
 }

@@ -51,7 +51,8 @@
     font-size: 20px;
 }
 
-.product-form form input:focus {
+.product-form form input:focus,
+.product-form form textarea:focus {
     border: 2px solid var(--secondary-color);
 }
 
@@ -168,7 +169,7 @@
 
 .imagesSelected p {
     color: white;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 13px;
 }
 
@@ -195,7 +196,7 @@
 
 .addProduct-loading {
     border-radius: 10px;
-    width: 100vw;
+    width: 100%;
     height: max-content;
     display: flex;
     justify-content: center;
@@ -209,4 +210,83 @@
 .addProduct-loading svg {
     width: 170px;
     fill: var(--primary-color);
+}
+
+@media screen and (max-width: 1280px) {
+    .addProduct {
+        padding: 0px 80px;
+        flex-direction: column;
+    }
+    .addImageDiv {
+        width: 300px;
+        height: 300px;
+        align-self: center;
+    }
+    .imagesSelected {
+        align-items: center;
+        flex-direction: row;
+        padding: 0;
+        justify-content: center;
+    }
+    .imagesSelected img {
+        width: 150px;
+        height: 100px;
+        margin: 0px 20px;
+        margin-bottom: 0px;
+    }
+    .imagesSelected button {
+        height: max-content;
+        padding: 15px;
+    }
+    .imagesSelected p {
+        margin-left: 10px;
+    }
+    .product-form {
+        margin: 0;
+        padding: 30px 20px;
+    }
+    .product-form form input,
+    .product-form form textarea {
+        font-size: 16px;
+    }
+    .product-form form>div {
+        width: 100%;
+    }
+    .product-form form>div input {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .addProduct {
+        padding: 0px 50px;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .addProduct {
+        padding: 0px 20px;
+    }
+    .addImageDiv {
+        width: 180px;
+        height: 180px;
+        align-self: center;
+    }
+    .product-form form input,
+    .product-form form textarea {
+        min-width: 300px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .product-form form input,
+    .product-form form textarea {
+        min-width: 250px;
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+    .createProduct-button {
+        padding: 13px;
+        font-size: 18px;
+    }
 }

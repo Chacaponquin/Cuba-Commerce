@@ -53,8 +53,6 @@ const Profile = (): JSX.Element => {
     }
   };
 
-  const followFunction = (id: string) => {};
-
   useEffect(() => {
     //SI NO EXISTE ID EN LA RUTA SE REDIRECCIONA A ERROR 404
     if (!id) navigate("/notFound");
