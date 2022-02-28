@@ -6,6 +6,7 @@ export enum SearchTypes {
   ADD_PRICE_MIN = "ADD_PRICE_MIN",
   ADD_ZONA = "ADD_ZONA",
   ADD_ORDERBY = "ADD_ORDER_BY",
+  ADD_NAME = "ADD_NAME",
 }
 
 export interface SearchAction {
@@ -29,6 +30,8 @@ export const searchReducer = (
       return { ...searchParams, zona: action.payload };
     case SearchTypes.ADD_ORDERBY:
       return { ...searchParams, order: action.payload };
+    case SearchTypes.ADD_NAME:
+      return { ...searchParams, name: action.payload };
     default:
       return searchParams;
   }

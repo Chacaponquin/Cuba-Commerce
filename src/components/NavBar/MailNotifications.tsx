@@ -1,6 +1,7 @@
+import { arrayRemove, doc, updateDoc } from "firebase/firestore";
 import { Dispatch } from "react";
 import { BsMailbox, BsX } from "react-icons/bs";
-import { auth } from "../../firebase/client";
+import { auth, db } from "../../firebase/client";
 
 interface MailNotificationsProps {
   notifications: any[];
@@ -16,15 +17,22 @@ const MailNotifications = ({
   setNotificationsOpen,
 }: MailNotificationsProps): JSX.Element => {
   //FUNCION PARA ELIMINAR UNA NOTIFICACION
-  const handleDeleteNotification = () => {
-    console.log(auth.currentUser?.uid);
+  const handleDeleteNotification = (message: any) => {
+    if (auth.currentUser) {
+      updateDoc(doc(db, "users", auth.currentUser.uid), {
+        messages: arrayRemove(message),
+      })
+        .then(() => {})
+        .catch((error) => console.log(error));
+    }
   };
 
   return (
-    <section
+    <span
       className={`navBar-mail-notifications ${
         notificationsOpen ? "notification-open" : "notification-close"
       }`}
+      title={String(notifications.length)}
     >
       <BsMailbox
         size={40}
@@ -39,11 +47,11 @@ const MailNotifications = ({
                 <p>{el.messageNotification}</p>
 
                 <section>
-                  <button onClick={() => handleOpenMessage(el.profileOwner.id)}>
+                  <button onClick={() => handleOpenMessage(el.id)}>
                     Reply
                   </button>
 
-                  <BsX size={25} onClick={handleDeleteNotification} />
+                  <BsX size={25} onClick={() => handleDeleteNotification(el)} />
                 </section>
               </div>
             ))
@@ -52,7 +60,7 @@ const MailNotifications = ({
           )}
         </div>
       )}
-    </section>
+    </span>
   );
 };
 

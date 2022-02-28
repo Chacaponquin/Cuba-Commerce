@@ -38,6 +38,7 @@ export type SearchParams = {
   priceMax?: number;
   zona?: string;
   order?: string;
+  name?: string;
 };
 
 export type MessageData = {

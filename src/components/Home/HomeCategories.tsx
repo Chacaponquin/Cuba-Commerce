@@ -29,17 +29,17 @@ const HomeCategories = ({
       querySend,
       async (querySnapshot) => {
         //ANADIR A UN ARRAY TODAS LAS CATEGORIAS RECIBIDAS
-        let allCategoories: any[] = [];
+        let allCategories: any[] = [];
         querySnapshot.forEach((category) => {
-          allCategoories.push(category.data());
+          allCategories.push(category.data());
         });
 
         //UN BUCLE PARA BUSCAR POR CADA CATEGORIA LA CANTIDAD DE POSTS QUE TIENEN
-        for (let i = 0; i < allCategoories.length; i++) {
+        for (let i = 0; i < allCategories.length; i++) {
           //CREAR LA QUERY PARA BUSCAR
           const querySend = query(
             collection(db, "products"),
-            where("categories", "array-contains", allCategoories[i].category)
+            where("categories", "array-contains", allCategories[i].category)
           );
 
           //ANADIR EN UN ARRAY TODOS LOS POSTS QUE ENCUENTRA CON ESA CATEGORIA
@@ -50,10 +50,14 @@ const HomeCategories = ({
           });
 
           //EN LA CATEGORIA PONER LA CANTIDAD DE POSTS ENCONTRADOS
-          allCategoories[i].posts = allPosts.length;
+          allCategories[i].posts = allPosts.length;
         }
+
+        //ORGANIZARLOS DE FORMA DESCENDENTE
+        allCategories.sort((a, b) => a.posts - b.posts).reverse();
+
         //PONER EN EL STATE TODAS LAS CATEORIAS CON LOS DATOS ACTUALIZADOS
-        setBestCategories(allCategoories);
+        setBestCategories(allCategories);
       },
       (error) => {
         console.log(error);

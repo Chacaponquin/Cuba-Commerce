@@ -1,34 +1,42 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Dispatch } from "react";
 import { BsX } from "react-icons/bs";
 import { FaCheck } from "react-icons/fa";
 import { ProfileLoading } from "..";
 import { db } from "../../firebase/client";
 import { AddProductData } from "../../helpers/types";
 
-interface AllProdcuts {
+interface AllProdcutsProps {
   id: string | undefined;
   handleDeleteProduct(id: string): any;
-  handleSoldProduct(id: string): any;
+  handleSoldProduct(
+    id: string,
+    allProducts: any[],
+    setAllProducts: Dispatch<any[]>
+  ): any;
 }
 
 const AllProduct = ({
   id,
   handleDeleteProduct,
   handleSoldProduct,
-}: AllProdcuts): JSX.Element => {
+}: AllProdcutsProps): JSX.Element => {
   //STATE DE LOADING
   const [loading, setLoading] = useState<boolean>(false);
   //STATE DE TODOS LOS PRODUCTOS
   const [allProducts, setAllProducts] = useState<any[]>([]);
 
+  //USEEFFECT PARA LA BUSQUEDA DE TODOS LOS PRODUCTOS
   useEffect(() => {
+    //CAMBIAR EL STATE DE LOADING A TRUE
     setLoading(true);
+    //CREAR LA QUERY DE LOS PRODUCTOS A BUSCAR
     const productsQuery = query(
       collection(db, "products"),
       where("creatorID", "==", id)
     );
 
+    //BUSCAR Y GUARDAR LOS PRODUCTOS
     let productsFound: any[] = [];
     getDocs(productsQuery)
       .then((querySnapshot) => {
@@ -59,13 +67,15 @@ const AllProduct = ({
                 <div className="myProfile-product-buttons">
                   <button
                     className={product.sold ? "sold" : ""}
-                    onClick={() => handleSoldProduct(product.id)}
+                    onClick={() =>
+                      handleSoldProduct(product.id, allProducts, setAllProducts)
+                    }
                   >
                     Sold
                     <FaCheck />
                   </button>
                   <button onClick={() => handleDeleteProduct(product.id)}>
-                    Eliminar
+                    Delete
                     <BsX />
                   </button>
                 </div>

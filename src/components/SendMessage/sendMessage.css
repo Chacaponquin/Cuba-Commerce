@@ -1,6 +1,7 @@
 .sendMessage-container {
     display: flex;
     justify-content: center;
+    flex-direction: column;
     align-items: center;
     width: 100%;
     height: 100vh;
@@ -8,14 +9,28 @@
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 999;
+    padding: 0px 20%;
+}
+
+.prevMessage,
+.sendMessage-input {
+    border-radius: 20px;
+    background-color: white;
+    padding: 30px 70px;
+}
+
+.prevMessage {
+    width: 100%;
+    margin-bottom: 25px;
+    font-weight: 700;
+    font-size: 35px;
 }
 
 .sendMessage-input {
     display: flex;
     flex-direction: column;
-    padding: 30px 70px;
-    background-color: white;
-    border-radius: 20px;
+    width: 100%;
 }
 
 .sendMessage-input>h1 {
@@ -38,7 +53,7 @@
     font-weight: 500;
 }
 
-.sendMessage-input>textarea :focus {
+.sendMessage-input>textarea:focus {
     border: 2px solid var(--secondary-color);
 }
 
@@ -64,4 +79,61 @@
     color: white;
     border: none;
     cursor: pointer;
+}
+
+@media screen and (max-width: 900px) {
+    .sendMessage-container {
+        padding: 0px 10%;
+    }
+    .sendMessage-input>h1 {
+        font-size: 28px;
+    }
+    .prevMessage {
+        font-size: 29px;
+    }
+    .sendMessage-input>textarea {
+        font-size: 18px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .prevMessage,
+    .sendMessage-input {
+        padding: 20px 35px;
+    }
+    .sendMessage-input>div>button {
+        padding: 10px 20px;
+        font-size: 18px;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .sendMessage-container {
+        padding: 0px 20px;
+    }
+    .sendMessage-input>h1 {
+        font-size: 22px;
+    }
+    .prevMessage {
+        font-size: 22px;
+    }
+    .sendMessage-input>textarea {
+        font-size: 15px;
+    }
+}
+
+@media screen and (max-width: 330px) {
+    .prevMessage,
+    .sendMessage-input {
+        padding: 15px 25px;
+    }
+    .sendMessage-input>h1 {
+        font-size: 19px;
+    }
+    .prevMessage {
+        font-size: 19px;
+    }
+    .sendMessage-input>textarea {
+        font-size: 14px;
+    }
 }

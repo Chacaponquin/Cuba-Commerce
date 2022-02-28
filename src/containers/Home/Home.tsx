@@ -102,6 +102,7 @@ const Home = (): JSX.Element => {
       }
     );
 
+    //CAMBIAR EL LOADING A FALSE
     setLoading(false);
   }, [selectCategory, auth.currentUser]);
 

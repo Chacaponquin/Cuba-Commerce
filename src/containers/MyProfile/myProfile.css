@@ -18,6 +18,7 @@
 }
 
 .myProfile-Inf {
+    min-width: 300px;
     display: flex;
     background-color: white;
     border-radius: 20px;
@@ -138,15 +139,18 @@
     margin-right: 35px;
 }
 
+.myProfile-followers-section>div>h1,
+.myProfile-followers-section>div>p {
+    font-size: 22px;
+}
+
 .myProfile-followers-section>div>p {
     font-weight: 600;
-    font-size: 22px;
     margin-right: 10px;
 }
 
 .myProfile-followers-section>div>h1 {
     color: gray;
-    font-size: 21px;
 }
 
 .allProducts-section {
@@ -249,7 +253,9 @@
 
 .myProfile-product-buttons>button:first-child:hover,
 .sold {
-    background-color: var(--third-color);
+    background-color: var(--third-color) !important;
+    color: white !important;
+    fill: white !important;
 }
 
 .myProfile-product-buttons>button>svg {
@@ -303,4 +309,86 @@
 .addDescription-button:hover {
     background-color: var(--secondary-color);
     color: white;
+}
+
+@media screen and (max-width: 1200px) {
+    .myProfile-container {
+        padding: 0px 100px;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .myProfile-container {
+        padding: 0px 50px;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .myProfile-Inf {
+        flex-direction: column;
+    }
+    .myProfile-infSection {
+        margin-top: 20px;
+        align-items: center;
+        padding: 0;
+    }
+    .myProfile-nickname-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .myProfile-Inf {
+        padding: 20px 30px;
+    }
+    .myProfile-nickname-section>h1 {
+        font-size: 23px;
+    }
+    .myProfile-nickname-section>div>p {
+        font-size: 21px;
+    }
+    .myProfile-followers-section>div>h1,
+    .myProfile-followers-section>div>p {
+        font-size: 19px;
+    }
+    .myProfile-image img,
+    .user-file-select {
+        width: 100px;
+        height: 100px;
+    }
+    .allProducts-section>h1 {
+        font-size: 38px;
+    }
+    .myProfile-image>svg {
+        transform: translateY(50px);
+    }
+    .myProfile-product>img {
+        width: 180px;
+        height: 200px;
+    }
+    .myProfile-product-buttons {
+        flex-direction: column;
+    }
+    .myProfile-product-buttons>button {
+        width: 100%;
+        margin: 5px 0px;
+    }
+}
+
+@media screen and (max-width: 470px) {
+    .myProfile-container {
+        padding: 0px 20px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .allProducts-section>h1 {
+        font-size: 30px;
+    }
+    .myProfile-product>img {
+        width: 150px;
+        height: 160px;
+    }
 }

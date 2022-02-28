@@ -1,5 +1,6 @@
 import { Bars } from "@agney/react-loading";
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useLayoutEffect, useReducer, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { Error, NavBar, SearchHeader, SearchOptions } from "../../components";
 import { orderByOptions } from "../../helpers/searchReducer/orderByOptions";
 import { searchReducer } from "../../helpers/searchReducer/reducer";
@@ -14,11 +15,10 @@ const Search = (): JSX.Element => {
   //STATE DE ERROR
   const [error, setError] = useState<null | string>(null);
   //STATE DE LOADING
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   //REF DEL CONTENEDOR DEL RESULTADO
   const searchResultDiv = useRef<HTMLTableSectionElement>(null);
   const searchInputRef = useRef<HTMLDivElement>(null);
-  const searchDivHeader = useRef<HTMLDivElement>(null);
   //REDUCER DE LOS PARAMETROS DE LA BUSQUEDA
   const [searchParams, dispatch] = useReducer(searchReducer, initialSearch);
   //RESULTADOS DE LA BUSQUEDA
@@ -26,24 +26,16 @@ const Search = (): JSX.Element => {
 
   //FUNCION PARA UBICAR LOS ELEMENTOS
   const ubicateResultSearch = (): void => {
-    if (
-      searchResultDiv.current?.style &&
-      searchInputRef.current &&
-      searchDivHeader.current
-    ) {
+    if (searchResultDiv.current?.style && searchInputRef.current) {
       searchResultDiv.current.style.transform = `translateY(${
         searchInputRef.current.clientHeight + 35
       }px)`;
 
       searchResultDiv.current.style.width = `${searchInputRef.current.clientWidth}px`;
-
-      searchDivHeader.current.style.transform = `translateY(-${
-        searchDivHeader.current.clientHeight / 2
-      }px)`;
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     //UBICAR ELEMENTOS
     ubicateResultSearch();
 
@@ -64,7 +56,7 @@ const Search = (): JSX.Element => {
           />
         )}
 
-        <SearchHeader searchDivHeader={searchDivHeader} />
+        <SearchHeader />
         <div className="search-content-div">
           <SearchOptions
             searchInputRef={searchInputRef}
@@ -79,16 +71,22 @@ const Search = (): JSX.Element => {
           <div className="search-posts">
             {loading ? (
               <Bars />
-            ) : (
+            ) : searchResult.length ? (
               searchResult.map((product: AddProductData, i: number) => (
-                <div className="post-search" key={i}>
+                <Link
+                  to={`/product/${product.id}`}
+                  className="post-search"
+                  key={i}
+                >
                   <img src={product.images[0]} alt={product.name} />
                   <div>
                     <p>{product.name}</p>
                     <p>${product.price}</p>
                   </div>
-                </div>
+                </Link>
               ))
+            ) : (
+              <h1>No se encontraron resultados</h1>
             )}
           </div>
         </div>

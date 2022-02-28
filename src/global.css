@@ -5,6 +5,11 @@
     box-sizing: border-box;
 }
 
+::after,
+::before {
+    box-sizing: border-box;
+}
+
 .right-error-position {
     right: 20px;
 }

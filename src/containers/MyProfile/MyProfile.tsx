@@ -10,7 +10,7 @@ import {
   where,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { useEffect, useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useFileUpload } from "use-file-upload";
 import { AllProduct, Error, Header, NavBar } from "../../components";
@@ -156,10 +156,24 @@ const MyProfile = (): JSX.Element => {
   };
 
   //FUNCION PARA SEÑALAR LA VENTA DE UN PRODUCTO
-  const handleSoldProduct = (id: string) => {
+  const handleSoldProduct = (
+    id: string,
+    allProducts: any[],
+    setAllProducts: Dispatch<any[]>
+  ): any => {
     const productRef = doc(db, "products", id);
     updateDoc(productRef, { sold: true })
-      .then(() => {})
+      .then(() => {
+        for (let i = 0; i < allProducts.length; i++) {
+          if (allProducts[i].id === id) {
+            allProducts[i].sold = true;
+            console.log(allProducts[i]);
+            break;
+          }
+        }
+
+        setAllProducts(allProducts);
+      })
       .catch((error) => console.log(error));
   };
 

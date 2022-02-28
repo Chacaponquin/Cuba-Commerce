@@ -9,6 +9,7 @@ interface SendMessageProps {
   setMessage: Dispatch<string>;
   loading: boolean;
   profile: { name: string; id: string };
+  prevMessage?: string | null;
 }
 
 const SendMessageContainer = ({
@@ -17,9 +18,12 @@ const SendMessageContainer = ({
   setMessage,
   loading,
   profile,
+  prevMessage = null,
 }: SendMessageProps): JSX.Element => {
   return (
     <div className="sendMessage-container">
+      {prevMessage && <div className="prevMessage">{prevMessage}</div>}
+
       <section className="sendMessage-input">
         <h1>
           Para: {profile.name}

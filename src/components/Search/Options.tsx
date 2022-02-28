@@ -29,13 +29,44 @@ const Options = ({
   setLoading,
   setError,
 }: SearchOptionsProps): JSX.Element => {
-  const [searchInput, setSearchInput] = useState<string>("");
+  //STATE DE EL INPUT DE LAS CATEGORIAS
+  const [categoryInput, setCategoryInput] = useState<string>("");
+  //STATE DE TODAS LAS CATEGORIAS SUGERIDAS
   const [searchCategoryResult, setSearchCategoryResult] = useState<string[]>(
     []
   );
 
-  //USE_EFFECT PARA OBTENER LOS PRODUCTOS SEGUN CAMBIEN LOS PARAMETROS DEL FORMULARIO
+  ///USE_EFFECT PARA BUSCAR CATEGORIAS QUE CONTENGAN EL INPUT
   useEffect(() => {
+    //SI NO ESTA VACIO EL INPUT SE BUSCAN TODAS LAS CATEGORIAS
+    if (categoryInput.length) {
+      getDocs(collection(db, "categories")).then((query) => {
+        //SE INTRODUCEN EN UN ARRAY
+        let allCategories: any[] = [];
+        query.forEach((category) => {
+          allCategories.push(category.data());
+        });
+
+        //SE FILTRAN PARA QUE SOLO QUEDEN LAS QUE TENGAN ALGO RELACIONADO CON LO ESCRITO EN EL INPUT
+        const categoriesIncludes = allCategories.filter((category) =>
+          category.category.toLowerCase().includes(categoryInput.toLowerCase())
+        );
+
+        //SE INCLUYEN EN EL STATE DE SEARCH_CATEGORY_RESULT
+        setSearchCategoryResult(categoriesIncludes);
+      });
+    }
+    //EN CASO CONTRARIO SE PONE UN ARRAY VACIO A LAS CATEGORIAS ENCONTRADAS
+    else setSearchCategoryResult([]);
+  }, [categoryInput, setSearchCategoryResult]);
+
+  //FUNCION PARA CAMBIAR EN EL ESTADO LA NUEVA ZONA
+  const handleZonaChange = (e: any) => {
+    dispatch({ type: SearchTypes.ADD_ZONA, payload: e.target.value });
+  };
+
+  //FUNCION PARA HACER LA BUSQUEDA
+  const handleSubmitSearch = () => {
     //VER SI EXISTE ALGUN ERROR EN LOS PARAMETROS
     const error = validateSearch(searchParams);
 
@@ -61,67 +92,47 @@ const Options = ({
         .catch((error) => console.log(error))
         .finally(() => setLoading(false));
     }
-  }, [searchParams, setSearchResult, setLoading, setError]);
-
-  ///USE_EFFECT PARA BUSCAR CATEGORIAS QUE CONTENGAN EL INPUT
-  useEffect(() => {
-    //SI NO ESTA VACIO EL INPUT SE BUSCAN TODAS LAS CATEGORIAS
-    if (searchInput !== "") {
-      getDocs(collection(db, "categories")).then((query) => {
-        //SE INTRODUCEN EN UN ARRAY
-        let allCategories: any[] = [];
-        query.forEach((category) => {
-          allCategories.push(category.data());
-        });
-
-        //SE FILTRAN PARA QUE SOLO QUEDEN LAS QUE TENGAN ALGO RELACIONADO CON LO ESCRITO EN EL INPUT
-        const categoriesIncludes = allCategories.filter((category) =>
-          category.category.toLowerCase().includes(searchInput.toLowerCase())
-        );
-
-        //SE INCLUYEN EN EL STATE DE SEARCH_CATEGORY_RESULT
-        setSearchCategoryResult(categoriesIncludes);
-      });
-    }
-    //EN CASO CONTRARIO SE PONE UN ARRAY VACIO A LAS CATEGORIAS ENCONTRADAS
-    else {
-      setSearchCategoryResult([]);
-    }
-  }, [searchInput, setSearchCategoryResult]);
-
-  //FUNCION PARA CAMBIAR EN EL ESTADO LA NUEVA ZONA
-  const handleZonaChange = (e: any) => {
-    dispatch({ type: SearchTypes.ADD_ZONA, payload: e.target.value });
-  };
-
-  const handleSearchChange = (e: any) => {
-    setSearchInput(e.target.value);
   };
 
   return (
     <div className="search-params">
       <div className="searchParams-div">
+        <p>Nombre</p>
+        <input
+          type="text"
+          onChange={(e) => {
+            dispatch({ type: SearchTypes.ADD_NAME, payload: e.target.value });
+          }}
+        />
+      </div>
+
+      <div className="searchParams-div">
         <p>Categoria</p>
         <div ref={searchInputRef}>
-          <input type="text" onChange={handleSearchChange} />
+          <input
+            type="text"
+            onChange={(e) => setCategoryInput(e.target.value)}
+            value={categoryInput}
+          />
           <FaSearch size={15} />
         </div>
 
         <section className="search-result" ref={searchResultDiv}>
-          {searchCategoryResult &&
-            searchCategoryResult.map((category: any, i: number) => (
-              <h1
-                key={i}
-                onClick={() =>
-                  dispatch({
-                    type: SearchTypes.ADD_CATEGORY,
-                    payload: category.category,
-                  })
-                }
-              >
-                {category.category}
-              </h1>
-            ))}
+          {searchCategoryResult.map((category: any, i: number) => (
+            <h1
+              key={i}
+              onClick={() => {
+                dispatch({
+                  type: SearchTypes.ADD_CATEGORY,
+                  payload: category.category,
+                });
+                setCategoryInput(category.category);
+                setSearchCategoryResult([]);
+              }}
+            >
+              {category.category}
+            </h1>
+          ))}
         </section>
       </div>
 
@@ -167,6 +178,8 @@ const Options = ({
       </div>
 
       <OrderByContainer dispatch={dispatch} />
+
+      <button onClick={handleSubmitSearch}>Search</button>
     </div>
   );
 };

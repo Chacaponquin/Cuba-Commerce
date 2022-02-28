@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    padding: 15px 45px;
+    padding: 15px 45px 0px 45px;
 }
 
 .navBar>a>img {
@@ -94,6 +94,7 @@
 }
 
 .profile-photo-options {
+    z-index: 999;
     box-shadow: 3px 3px 5px gray;
     position: absolute;
     background-color: white;
@@ -157,6 +158,22 @@
     transition: 0.3s ease all;
 }
 
+.navBar-mail-notifications::before {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    content: attr(title);
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    z-index: 998;
+    color: white;
+    width: 25px;
+    height: 25px;
+    transform: translateX(10px) translateY(-5px);
+    font-size: 14px;
+}
+
 .mail-notifications {
     display: flex;
     flex-direction: column;
@@ -165,6 +182,7 @@
     position: absolute;
     background-color: white;
     transform: translateY(50px);
+    z-index: 999;
 }
 
 .mail-notifications>div {

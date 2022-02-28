@@ -13,6 +13,8 @@
 .categories-container {
     width: 22.5%;
     max-width: 300px;
+    position: sticky;
+    z-index: -999;
 }
 
 .categories-container {
@@ -292,5 +294,14 @@
     }
     .post {
         width: 450px;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .post>a>img {
+        width: 130px;
+    }
+    .post {
+        width: 350px;
     }
 }

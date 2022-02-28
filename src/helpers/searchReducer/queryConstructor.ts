@@ -8,9 +8,10 @@ export const queryConstructor = (searchData: SearchParams) => {
   let categoryQuery = null;
   let priceMaxQuery = null;
   let priceMinQuery = null;
+  let nameQuery = null;
   let existParams: any[] = [];
 
-  const { order, category, priceMax, priceMin } = searchData;
+  const { order, category, priceMax, priceMin, name } = searchData;
   if (order) {
     if (order === orderByOptions.MAYOR_PRECIO) {
       orderQuery = orderBy("price", "desc");
@@ -22,7 +23,7 @@ export const queryConstructor = (searchData: SearchParams) => {
   }
 
   if (category) {
-    categoryQuery = where("products", "array-contains", category);
+    categoryQuery = where("categories", "array-contains", category);
     existParams.push(categoryQuery);
   }
 
@@ -34,6 +35,11 @@ export const queryConstructor = (searchData: SearchParams) => {
   if (priceMin) {
     priceMinQuery = where("price", ">=", priceMin);
     existParams.push(priceMinQuery);
+  }
+
+  if (name) {
+    nameQuery = where("name", "==", name);
+    existParams.push(nameQuery);
   }
 
   return checkParams(existParams);
@@ -65,6 +71,16 @@ const checkParams = (paramsArray: any[]) => {
         paramsArray[1],
         paramsArray[2],
         paramsArray[3],
+        limit(10)
+      );
+    case 5:
+      return query(
+        collection(db, "products"),
+        paramsArray[0],
+        paramsArray[1],
+        paramsArray[2],
+        paramsArray[3],
+        paramsArray[4],
         limit(10)
       );
     default:

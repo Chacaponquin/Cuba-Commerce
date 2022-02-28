@@ -7,64 +7,60 @@
 
 .search-header {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     margin-bottom: 15px;
     align-items: center;
-}
-
-.search-header>img {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-    border-radius: 10px;
-}
-
-.inputSearch-header {
-    display: flex;
+    fill: var(--primary-color);
+    justify-content: center;
     align-items: center;
-    padding: 10px 30px;
-    border-radius: 15px;
-    background-color: white;
-    border: 2px solid var(--secondary-color);
-    position: relative;
-    fill: var(--secondary-color);
+    padding-bottom: 20px;
 }
 
-.inputSearch-header input {
-    border-radius: 10px;
-    outline: none;
-    min-width: 310px;
-    padding: 8px 5px;
-    margin-right: 40px;
-    font-size: 18px;
-    border: none;
+.search-header>h1 {
+    font-size: 110px;
 }
 
-.inputSearch-header svg {
+.search-header>svg {
     fill: inherit;
+    margin-left: 25px;
+    position: relative;
+    top: 10px;
 }
 
 .search-content-div {
     display: flex;
     width: 100%;
-    transform: translateY(-20px);
 }
 
 .search-params {
     display: flex;
     flex-direction: column;
-    width: 30%;
-    max-width: 270px;
+    min-width: 200px;
     background-color: var(--secondary-color);
     border-radius: 10px;
     padding: 15px 20px;
     height: max-content;
+    align-items: center;
+}
+
+.search-params>button {
+    border-radius: 8px;
+    background-color: white;
+    border: none;
+    font-size: 18px;
+    padding: 10px 25px;
+    margin-top: 10px;
+    font-weight: 500;
+    color: black;
+    cursor: pointer;
+    width: max-content;
 }
 
 .searchParams-div {
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
+    width: 100%;
 }
 
 .searchParams-div>div {
@@ -72,6 +68,9 @@
     background-color: white;
     align-items: center;
     border-radius: 10px;
+}
+
+.searchParams-div:nth-child(2)>div {
     padding-right: 10px;
 }
 
@@ -84,11 +83,12 @@
     position: absolute;
     display: flex;
     flex-direction: column;
-    transform: translateY(100px);
+    transform: translateY(70px);
 }
 
 .search-result>h1 {
     font-size: 16px;
+    font-weight: 500;
     color: black;
     padding: 7px 10px;
     background-color: whitesmoke;
@@ -131,10 +131,16 @@ select {
 
 .search-posts {
     display: flex;
-    min-width: 70%;
+    min-width: 65%;
     padding-left: 40px;
     flex-wrap: wrap;
     justify-content: space-around;
+}
+
+.search-posts>h1 {
+    font-size: 40px;
+    color: gray;
+    text-align: center;
 }
 
 .search-posts svg {
@@ -156,7 +162,7 @@ select {
 }
 
 .post-search img {
-    width: 235px;
+    width: 220px;
     height: 200px;
     object-fit: cover;
     border-radius: 15px 15px 0px 0px;
@@ -164,7 +170,7 @@ select {
 
 .post-search>div {
     display: flex;
-    padding: 10px 15px;
+    padding: 10px 10px;
     align-items: center;
     justify-content: space-between;
 }
@@ -180,4 +186,116 @@ select {
 
 .search-error {
     right: 20px;
+}
+
+@media screen and (max-width: 1200px) {
+    .search-container {
+        padding: 0px 110px;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .post-search img {
+        width: 190px;
+        height: 180px;
+    }
+    .search-params p {
+        font-size: 18px;
+    }
+    .search-params input,
+    select {
+        font-size: 14px;
+    }
+    .search-result {
+        transform: translateY(60px);
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .search-container {
+        padding: 0px 70px;
+    }
+    .search-header>h1 {
+        font-size: 90px;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .inputSearch-header input {
+        min-width: 230px;
+        padding: 6px 5px;
+    }
+    .search-header>img {
+        height: 200px;
+    }
+    .search-posts {
+        padding-left: 20px;
+    }
+    .search-posts svg {
+        width: 90px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .search-container {
+        padding: 0px 30px;
+    }
+    .post-search img {
+        width: 130px;
+        height: 110px;
+    }
+    .post-search>div {
+        flex-direction: column;
+    }
+    .post-search>div p {
+        font-size: 17px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .search-params {
+        min-width: 170px;
+    }
+    .search-header>h1 {
+        font-size: 60px;
+    }
+    .search-header>svg {
+        min-width: 50px;
+    }
+    .search-result>h1 {
+        font-size: 14px;
+        padding: 5px 8px;
+    }
+    .inputSearch-header input {
+        min-width: 190px;
+        margin-right: 25px;
+        font-size: 16px;
+    }
+    .search-params p {
+        font-size: 16px;
+    }
+    .inputSearch-header {
+        padding: 8px 15px;
+    }
+    .inputSearch-header>svg {
+        width: 20px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .search-content-div {
+        flex-direction: column;
+    }
+    .search-params {
+        flex-direction: row;
+        width: 100%;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+    .search-posts {
+        padding-left: 0px;
+    }
+    .searchParams-div {
+        width: 100%;
+    }
 }

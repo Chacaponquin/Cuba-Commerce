@@ -1,4 +1,10 @@
-import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  arrayUnion,
+  doc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -39,8 +45,11 @@ const NavBar = (): JSX.Element => {
     if (auth.currentUser) {
       //CONTRUIR LA QUERY DE EL USUARIO
       const queryNotification = doc(db, "users", auth.currentUser.uid);
-      getDoc(queryNotification)
-        .then(async (querySnapshot) => {
+
+      //SNAPSHOT DE LAS NOTIFICACIONES DEL PERFIL
+      onSnapshot(
+        queryNotification,
+        async (querySnapshot) => {
           //EXTRAER LOS MENSAJES DEL USUARIO
           const messages = querySnapshot.data()?.messages;
 
@@ -59,8 +68,9 @@ const NavBar = (): JSX.Element => {
 
           //UBICARLOS EN EL STATE
           setNotifications(messages);
-        })
-        .catch((error) => console.log(error));
+        },
+        (error) => console.log(error)
+      );
     }
   }, [auth.currentUser]);
 
@@ -71,14 +81,13 @@ const NavBar = (): JSX.Element => {
     //CERRAR LAS NOTIFICACIONES
     setNotificationsOpen(false);
     //FILTRAR LOS MENSJAES Y QUEDARSE CON LA PERSONA A LA QUE PERTENECE EL MENSAJE
-    const filtroID = notifications.filter((el) => el.profileOwner.id === id);
+    const filtroID = notifications.filter((el) => el.id === id);
 
     setSelectNotf(filtroID[0]);
   };
 
   //FUNCION PARA ENVIAR EL MENSAJE
   const handleSendMessage = (id: string) => {
-    console.log(id);
     //VER SI EXISTE ERROR EN EL MESNAJE
     const error = validateProfileMessage(message);
     if (error) mostrarError(error, setError);
@@ -118,6 +127,7 @@ const NavBar = (): JSX.Element => {
           setMessage={setMessage}
           loading={loading}
           profile={selectNotf.profileOwner}
+          prevMessage={selectNotf.message}
         />
       )}
 
