@@ -10,12 +10,14 @@ import {
   where,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { Dispatch, useEffect, useState } from "react";
+import { Dispatch, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useFileUpload } from "use-file-upload";
 import { AllProduct, Error, Header, NavBar } from "../../components";
-import { auth, db, storage } from "../../firebase/client";
+import { ProfileContext } from "../../context/ProfileContext";
+import { db, storage } from "../../firebase/client";
 import { mostrarError, myProfileErrors } from "../../helpers/errors";
+import { validateImage } from "../../helpers/validateImage";
 import { validationMyProfile } from "../../helpers/validations";
 import "./myProfile.css";
 
@@ -26,6 +28,8 @@ export const isEditingOptions = {
 };
 
 const MyProfile = (): JSX.Element => {
+  //EXTRAER CONTEXT DE USER
+  const { user } = useContext(ProfileContext);
   const navigate = useNavigate();
   //STATE DEL LOADING
   const [loading, setLoading] = useState<boolean>(false);
@@ -43,13 +47,13 @@ const MyProfile = (): JSX.Element => {
   const [inputValue, setInputValue] = useState<string>("");
 
   useEffect(() => {
-    if (auth.currentUser) {
+    if (user) {
       //CAMBIAR EL STATE DE LOADING A TRUE
       setLoading(true);
       //CONTRUIR EL QUERY DEL PERFIL A BUSCAR
       const profileQuery = query(
         collection(db, "users"),
-        where("id", "==", auth.currentUser.uid)
+        where("id", "==", user.uid)
       );
 
       //SNAPSHOT DE EL PERFIL
@@ -69,49 +73,53 @@ const MyProfile = (): JSX.Element => {
         }
       );
     }
-  }, [navigate]);
+  }, [navigate, user]);
 
   //FUNCION PARA SELECCIONAR LA IMAGEN
   const selectImage = (): void => {
     selectFile({ multiple: false, accept: "image/*" }, (file: any) => {
-      //PREGUNTAR AL USUARIO SI DESEA CAMBIAR LA FOTO
-      const ask = window.confirm("¿Desea cambiar la foto de perfil?");
+      if (validateImage(file)) {
+        //PREGUNTAR AL USUARIO SI DESEA CAMBIAR LA FOTO
+        const ask = window.confirm("¿Desea cambiar la foto de perfil?");
 
-      //SI NO CONFIRMA SE ELIMINA LA FOTO
-      if (!ask) setPickImage(null);
-      //EN CASO CONTRARIO
-      else {
-        //UBICAR LA FOTO EN EL STATE DE FOTO SELECCIONADA
-        setPickImage(file);
+        //SI NO CONFIRMA SE ELIMINA LA FOTO
+        if (!ask) setPickImage(null);
+        //EN CASO CONTRARIO
+        else {
+          //UBICAR LA FOTO EN EL STATE DE FOTO SELECCIONADA
+          setPickImage(file);
 
-        //REFERENCIA DE DONDE SE VA A SUBIR
-        const imageRef = ref(
-          storage,
-          `images/user/${profileInf.id}${Date.now()}`
-        );
+          //REFERENCIA DE DONDE SE VA A SUBIR
+          const imageRef = ref(
+            storage,
+            `images/user/${profileInf.id}${Date.now()}`
+          );
 
-        //CAMBIAR EL STATE DE LOADING A TRUE
-        setLoading(true);
-        //SUBIR LA IMAGEN
-        uploadBytes(imageRef, file.file)
-          .then(async (image) => {
-            //OBTENER LA URL
-            const imageURL = await getDownloadURL(image.ref);
+          //CAMBIAR EL STATE DE LOADING A TRUE
+          setLoading(true);
+          //SUBIR LA IMAGEN
+          uploadBytes(imageRef, file.file)
+            .then(async (image) => {
+              //OBTENER LA URL
+              const imageURL = await getDownloadURL(image.ref);
 
-            if (auth.currentUser) {
-              //ACTUALIZAR EL USUARIO CON LA NUEVA IMAGEN
-              await updateProfile(auth.currentUser, { photoURL: imageURL });
+              if (user) {
+                //ACTUALIZAR EL USUARIO CON LA NUEVA IMAGEN
+                await updateProfile(user, { photoURL: imageURL });
 
-              if (auth.currentUser.uid) {
-                //ACTUALIZAR EL USUARIO DE LA COLECCION DE USUARIOS
-                const profileRef = doc(db, "users", auth.currentUser.uid);
-                await updateDoc(profileRef, { image: imageURL });
+                if (user.uid) {
+                  //ACTUALIZAR EL USUARIO DE LA COLECCION DE USUARIOS
+                  const profileRef = doc(db, "users", user.uid);
+                  await updateDoc(profileRef, { image: imageURL });
+                }
               }
-            }
-          })
-          .catch((error) => setInputError(myProfileErrors.requestError))
-          .finally(() => setLoading(false));
-      }
+            })
+            .catch((error) =>
+              mostrarError(myProfileErrors.requestError, setInputError)
+            )
+            .finally(() => setLoading(false));
+        }
+      } else mostrarError(myProfileErrors.imageError, setInputError);
     });
   };
 
@@ -124,12 +132,12 @@ const MyProfile = (): JSX.Element => {
 
       if (error) mostrarError(error, setInputError);
       else {
-        if (auth.currentUser) {
-          const profileRef = doc(db, "users", auth.currentUser.uid);
+        if (user) {
+          const profileRef = doc(db, "users", user.uid);
           updateDoc(profileRef, { nickname: inputValue })
             .then(async () => {
-              if (auth.currentUser) {
-                await updateProfile(auth.currentUser, {
+              if (user) {
+                await updateProfile(user, {
                   displayName: inputValue,
                 });
               }
@@ -143,16 +151,28 @@ const MyProfile = (): JSX.Element => {
   };
 
   //FUNCION PARA ELIMINAR UN PRODUCTO
-  const handleDeleteProduct = (id: string): void => {
+  const handleDeleteProduct = (
+    id: string,
+    setAllProducts: Dispatch<any[]>,
+    allProducts: any[]
+  ): void => {
     //CREAR LA REFERENCIA DEL PRODUCTO
     const productRef = doc(db, "products", id);
-    //ELIMINAR PRODUCTO
-    deleteDoc(productRef)
-      .then(() => {})
-      .catch((error) => {
-        console.log(error);
-        setInputError(myProfileErrors.requestError);
-      });
+
+    //PREGUNTAR SI QUIERE ELIMINAR EL PRODUCTO
+    const ask = window.confirm("Seguro quiere eliminar este producto?");
+    if (ask) {
+      //ELIMINAR PRODUCTO
+      deleteDoc(productRef)
+        .then(() => {
+          //ELIMINAR EL PRODUCTO DEL STATE
+          setAllProducts(allProducts.filter((el) => el.id !== id));
+        })
+        .catch((error) => {
+          console.log(error);
+          setInputError(myProfileErrors.requestError);
+        });
+    }
   };
 
   //FUNCION PARA SEÑALAR LA VENTA DE UN PRODUCTO
@@ -227,7 +247,7 @@ const MyProfile = (): JSX.Element => {
         />
 
         <AllProduct
-          id={auth.currentUser?.uid}
+          id={user?.uid}
           handleDeleteProduct={handleDeleteProduct}
           handleSoldProduct={handleSoldProduct}
         />

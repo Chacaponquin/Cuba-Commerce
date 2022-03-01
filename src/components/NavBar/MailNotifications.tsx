@@ -1,9 +1,10 @@
 import { arrayRemove, doc, updateDoc } from "firebase/firestore";
 import { Dispatch } from "react";
 import { BsMailbox, BsX } from "react-icons/bs";
-import { auth, db } from "../../firebase/client";
+import { db } from "../../firebase/client";
 
 interface MailNotificationsProps {
+  user: any;
   notifications: any[];
   handleOpenMessage(id: string): any;
   notificationsOpen: boolean;
@@ -11,6 +12,7 @@ interface MailNotificationsProps {
 }
 
 const MailNotifications = ({
+  user,
   notifications,
   handleOpenMessage,
   notificationsOpen,
@@ -18,8 +20,8 @@ const MailNotifications = ({
 }: MailNotificationsProps): JSX.Element => {
   //FUNCION PARA ELIMINAR UNA NOTIFICACION
   const handleDeleteNotification = (message: any) => {
-    if (auth.currentUser) {
-      updateDoc(doc(db, "users", auth.currentUser.uid), {
+    if (user) {
+      updateDoc(doc(db, "users", user.uid), {
         messages: arrayRemove(message),
       })
         .then(() => {})

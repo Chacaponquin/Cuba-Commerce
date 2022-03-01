@@ -1,10 +1,10 @@
-import { Dispatch, useEffect, useRef, useState } from "react";
+import { Dispatch, useEffect, useRef, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { BsX } from "react-icons/bs";
 import { FaImages } from "react-icons/fa";
 import { useFileUpload } from "use-file-upload";
 import { Error, NavBar } from "../../components";
-import { auth, db, storage } from "../../firebase/client";
+import { db, storage } from "../../firebase/client";
 import {
   collection,
   doc,
@@ -22,30 +22,27 @@ import "./addProduct.css";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Bars, useLoading } from "@agney/react-loading";
 import { useNavigate } from "react-router";
+import { ProfileContext } from "../../context/ProfileContext";
+import { validateImage } from "../../helpers/validateImage";
 
 const AddProduct = (): JSX.Element => {
+  //EXTRAER CONTEXT
+  const { user } = useContext(ProfileContext);
   const navigate = useNavigate();
-
   const { containerProps } = useLoading({ loading: true, indicator: <Bars /> });
-
   const {
     handleSubmit,
     register,
     formState: { errors },
   } = useForm();
-
   //REF CON EL INPUT DE LA CATEGORIA DEL PRODUCTO
   const categoryInputRef = useRef<HTMLInputElement>(null);
-
   //STATE CON LAS CATEGORIAS ESCRITAS
   const [categories, setCategories] = useState<string[]>([]);
-
   //STATE DEL LOADING
   const [loading, setLoading] = useState<boolean>(false);
-
   //STATE DE LAS IMAGENES SUBIDAS
   const [file, selectFile] = useFileUpload();
-
   //DEBIDO A QUE NO TENGO EL PROTOTIPO DE LA VARIABLE FILE DE LA LIBRERIA EN ESTE STATE SE GUARDA EL OBJETO FILE
   const [images, setImages] = useState<any[]>([]);
 
@@ -64,21 +61,28 @@ const AddProduct = (): JSX.Element => {
   //FUNCION PARA PERMITIR AL USUARIO SELECCIONAR IMAGENES
   const selectImage = (): void => {
     selectFile({ multiple: true, accept: "image/*" }, (file: any): void => {
-      //SI LA IMAGEN TIENE MAS DE 10MB MUESTRA UN ERROR
-      if (file[0].size / 1048576 < 10) setImages(file);
-      else mostrarError(addProductErrors.imageToBig, setFormError);
+      let contError = 0;
+      let i = 0;
+      while (contError === 0 && i < file.length) {
+        if (!validateImage(file[i])) contError++;
+        i++;
+      }
+
+      contError === 0
+        ? setImages(file)
+        : mostrarError(addProductErrors.imageToBig, setFormError);
     });
   };
 
   const onSubmit = async (data: AddProductData) => {
     //INSTRODUCIR LAS CATEGORIAS Y LAS IMAGENES EN EL FORMULARIO
-    if (auth.currentUser?.uid) {
+    if (user) {
       data.categories = categories;
       data.price = Number(data.price);
       data.images = images;
       data.visits = 0;
-      data.creatorID = auth.currentUser?.uid;
-      data.id = `${auth.currentUser.uid}${Date.now()}`;
+      data.creatorID = user.uid;
+      data.id = `${user.uid}${Date.now()}`;
       data.sold = false;
     }
 
@@ -243,17 +247,16 @@ const CategoryInputSection = ({
   const [resultHeight, setResultHeight] = useState(
     document.querySelector(".category-search-result")?.clientHeight
   );
-
   //STATE CON EL VALOR DEL INPUT DE CATEGORIAS
   const [inputSearch, setInputSearch] = useState<string>("");
-
   //STATE CON TODAS LAS CATEGORIAS ENCONTRADAS
   const [categoriesFound, setCategoriesFound] = useState<any[]>([]);
 
   //FUNCION PARA BUSCAR CATEGORIAS RELACIONADAS
   const handleCategoryChange = (e: any) => {
+    //INSERTAR EN EL STATE EL VALOR DEL INPUT
     setInputSearch(e.target.value);
-
+    //CREAR LA QUERY DE TODAS LAS CATEGORIAS
     const categoryQuery = query(collection(db, "categories"), limit(10));
 
     let allCategories: any[] = [];
@@ -262,12 +265,12 @@ const CategoryInputSection = ({
         querySnapshot.forEach((category) => {
           allCategories.push(category.data());
         });
-
-        allCategories.filter((category) =>
+        //FILTRAR LAS CATEGORIAS
+        const categoryIncludes = allCategories.filter((category) =>
           category.category.toLowerCase().includes(inputSearch.toLowerCase())
         );
 
-        setCategoriesFound(allCategories);
+        setCategoriesFound(categoryIncludes);
       })
       .catch((error) => console.log(error));
   };
@@ -283,7 +286,7 @@ const CategoryInputSection = ({
     ) {
       setCategories([...categories, input.toLowerCase()]);
 
-      if (categoryInputRef.current) categoryInputRef.current.value = "";
+      if (categoryInputRef.current) setInputSearch("");
 
       //VACIAR EL BLOQUE DE CATEGORIAS SIMILARES
       setCategoriesFound([]);
@@ -310,7 +313,15 @@ const CategoryInputSection = ({
           }}
         >
           {categoriesFound.map((category, i: number) => (
-            <div key={i}>{category.category}</div>
+            <div
+              key={i}
+              onClick={() => {
+                setCategoriesFound([]);
+                setInputSearch(category.category);
+              }}
+            >
+              {category.category}
+            </div>
           ))}
         </div>
 
@@ -319,6 +330,7 @@ const CategoryInputSection = ({
           className="categories-form-search"
           ref={categoryInputRef}
           onChange={handleCategoryChange}
+          value={inputSearch}
         />
         <div onClick={addCategory}>New</div>
       </div>

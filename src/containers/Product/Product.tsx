@@ -8,18 +8,20 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { BsCardText } from "react-icons/bs";
 import { useNavigate, useParams } from "react-router";
 import { Error, NavBar, SendMessageContainer } from "../../components";
-import { auth, db } from "../../firebase/client";
+import { db } from "../../firebase/client";
 import { mostrarError, profileErrors } from "../../helpers/errors";
 import { validateProfileMessage } from "../../helpers/validations";
 import { MessageData } from "../../helpers/types";
 import { Link } from "react-router-dom";
+import { ProfileContext } from "../../context/ProfileContext";
 import "./product.css";
 
 const Product = (): JSX.Element => {
+  const { user } = useContext(ProfileContext);
   const navigate = useNavigate();
   //EXTRAER EL ID DEL PRODUCTO DE LA RUTA
   const { productID } = useParams();
@@ -106,14 +108,14 @@ const Product = (): JSX.Element => {
     const error = validateProfileMessage(message);
     if (error) mostrarError(error, setError);
     else {
-      if (productFound?.creatorID.id && auth.currentUser) {
+      if (productFound?.creatorID.id && user) {
         //CONSTRUIR MENSAJE
         const newMessage: MessageData = {
-          id: `${Date.now()}${auth.currentUser.uid}`,
+          id: `${Date.now()}${user.uid}`,
           profileTo: id,
-          profileOwner: auth.currentUser.uid,
+          profileOwner: user.uid,
           message: message,
-          messageNotification: `A ${auth.currentUser.displayName} le interesa el producto ${productFound.name}`,
+          messageNotification: `A ${user.displayName} le interesa el producto ${productFound.name}`,
         };
 
         //CAMBIAR EL STATE DE LOADING A TRUE

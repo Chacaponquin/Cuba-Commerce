@@ -7,17 +7,19 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
   HomeCategories,
   HomeFriends,
   HomePosts,
   NavBar,
 } from "../../components";
-import { auth, db } from "../../firebase/client";
+import { ProfileContext } from "../../context/ProfileContext";
+import { db } from "../../firebase/client";
 import "./home.css";
 
 const Home = (): JSX.Element => {
+  const { user } = useContext(ProfileContext);
   //STATE PARA LOS POSTS BUSCADOS
   const [homePosts, setHomePosts] = useState<any[]>([]);
   //STATE DEL LOADING
@@ -34,10 +36,10 @@ const Home = (): JSX.Element => {
     //QUERY INICIAL POR DEFECTO
     let initialQuery;
 
-    if (auth.currentUser) {
+    if (user) {
       initialQuery = query(
         collection(db, "products"),
-        where("creatorID", "!=", auth.currentUser.uid),
+        where("creatorID", "!=", user.uid),
         limit(15)
       );
     } else {
@@ -104,7 +106,7 @@ const Home = (): JSX.Element => {
 
     //CAMBIAR EL LOADING A FALSE
     setLoading(false);
-  }, [selectCategory, auth.currentUser]);
+  }, [selectCategory, user]);
 
   return (
     <div className="home-container">

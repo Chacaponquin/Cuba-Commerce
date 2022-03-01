@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import DarkModeToggle from "react-dark-mode-toggle";
-import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { ColorContext, colors } from "../../context/ColorContext";
 import { FaDoorClosed, FaSearch } from "react-icons/fa";
@@ -8,8 +7,7 @@ import { BsGear } from "react-icons/bs";
 import { auth } from "../../firebase/client";
 
 const ProfileOptions = (): JSX.Element => {
-  const navigate = useNavigate();
-  //CONTEXT
+  //CONTEXT DE COLOR MODE
   const context = useContext(ColorContext);
   //FUNCION PARA CAMBIAR A DARK O LIGHT MODE
   const handleChangeMode = () => {

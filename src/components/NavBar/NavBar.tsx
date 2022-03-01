@@ -1,29 +1,24 @@
-import {
-  arrayUnion,
-  doc,
-  getDoc,
-  onSnapshot,
-  updateDoc,
-} from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { useContext, useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { auth, db } from "../../firebase/client";
+import { db } from "../../firebase/client";
 import { Error, SendMessageContainer } from "..";
 import { validateProfileMessage } from "../../helpers/validations";
 import { mostrarError, profileErrors } from "../../helpers/errors";
 import { MessageData } from "../../helpers/types";
 import ProfilePhoto from "./ProfilePhoto";
 import MailNotifications from "./MailNotifications";
+import { ProfileContext } from "../../context/ProfileContext";
 import "./navBar.css";
 
 const NavBar = (): JSX.Element => {
+  //EXTRAER CONTEXT
+  const { notifications, user } = useContext(ProfileContext);
   //STATE DE EL TAMAÑO DE LA VENTANA
   const [windowSize, setWindowSize] = useState<number>(window.innerWidth);
   //STATE QUE INDICA SI ESTAN ABIERTAS LAS NOTIFICACIONES
   const [notificationsOpen, setNotificationsOpen] = useState<boolean>(false);
-  //STATE CON TODAS LAS NOTIFICACIONES DEL USUARIO
-  const [notifications, setNotifications] = useState<any[]>([]);
   //STATE PARA INTERACTUAR CON LA ESCRITURA DE MENSAJE
   const [messageOpen, setMessageOpen] = useState<boolean>(false);
   //STATE QUE CONTIENE EL MENSAJE ESCRITO
@@ -39,40 +34,6 @@ const NavBar = (): JSX.Element => {
   useEffect(() => {
     window.addEventListener("resize", () => setWindowSize(window.innerWidth));
   }, []);
-
-  //USEEFECT PARA OBTENER TODAS LAS NOTIFICACIONES
-  useEffect(() => {
-    if (auth.currentUser) {
-      //CONTRUIR LA QUERY DE EL USUARIO
-      const queryNotification = doc(db, "users", auth.currentUser.uid);
-
-      //SNAPSHOT DE LAS NOTIFICACIONES DEL PERFIL
-      onSnapshot(
-        queryNotification,
-        async (querySnapshot) => {
-          //EXTRAER LOS MENSAJES DEL USUARIO
-          const messages = querySnapshot.data()?.messages;
-
-          //BUSCAR EL CREADOR DE CADA MENSAJE
-          for (let i = 0; i < messages.length; i++) {
-            const profile = await getDoc(
-              doc(db, "users", messages[i].profileOwner)
-            );
-
-            //OBTENER EL NOMBRE Y EL ID DE CADA CREADOR
-            messages[i].profileOwner = {
-              name: profile.data()?.nickname,
-              id: profile.data()?.id,
-            };
-          }
-
-          //UBICARLOS EN EL STATE
-          setNotifications(messages);
-        },
-        (error) => console.log(error)
-      );
-    }
-  }, [auth.currentUser]);
 
   //FUNCION PARA ABRIR EL ESCRITOR DE MENSAJES
   const handleOpenMessage = (id: string) => {
@@ -92,16 +53,16 @@ const NavBar = (): JSX.Element => {
     const error = validateProfileMessage(message);
     if (error) mostrarError(error, setError);
     else {
-      if (auth.currentUser) {
+      if (user) {
         //CAMBIAR EL STATE DE LOADING A TRUE
         setLoading(true);
         //CREAR EL MENSAJE
         const newMessage: MessageData = {
-          id: `${Date.now()}${auth.currentUser.uid}`,
+          id: `${Date.now()}${user.currentUser.uid}`,
           profileTo: id,
-          profileOwner: auth.currentUser.uid,
+          profileOwner: user.uid,
           message: message,
-          messageNotification: `${auth.currentUser.displayName} te ha respondido`,
+          messageNotification: `${user.displayName} te ha respondido`,
         };
 
         //ACTUALIZAR LOS MENSAJES DEL USUARIO
@@ -152,8 +113,9 @@ const NavBar = (): JSX.Element => {
         </Link>
 
         <div>
-          {auth.currentUser && (
+          {user && (
             <MailNotifications
+              user={user}
               notifications={notifications}
               handleOpenMessage={handleOpenMessage}
               notificationsOpen={notificationsOpen}
@@ -161,13 +123,13 @@ const NavBar = (): JSX.Element => {
             />
           )}
 
-          {auth.currentUser ? (
+          {user ? (
             <>
               <Link to="/addProduct" className="add-product">
                 <FaPlus size={20} color="white" />
               </Link>
 
-              <ProfilePhoto profile={auth.currentUser} />
+              <ProfilePhoto profile={user} />
             </>
           ) : (
             <section>

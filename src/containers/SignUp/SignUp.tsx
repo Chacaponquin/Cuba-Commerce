@@ -14,6 +14,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
 import "../Login/signIn.css";
 import "./signUp.css";
+import { validateImage } from "../../helpers/validateImage";
 
 const SignUp = (): JSX.Element => {
   const { containerProps } = useLoading({
@@ -103,9 +104,11 @@ const SignUp = (): JSX.Element => {
     }
   };
 
+  //FUNCION PARA SELECCIONAR IMAGEN
   const selectImage = (): void => {
     selectFile({ multiple: false, accept: "image/*" }, (file: any): void => {
-      setImage(file);
+      if (validateImage(file)) setImage(file);
+      else mostrarError(signUpErrors.imageError, setFormError);
     });
   };
 
@@ -120,7 +123,7 @@ const SignUp = (): JSX.Element => {
       )}
 
       <div className="signIn-card">
-        {file ? (
+        {image ? (
           <div className="pictureSelected" onClick={selectImage}>
             <img src={image?.source} alt="profile-preview" />
           </div>

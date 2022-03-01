@@ -6,20 +6,23 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { auth, db } from "../../firebase/client";
+import { ProfileContext } from "../../context/ProfileContext";
+import { db } from "../../firebase/client";
 
 const HomeFriends = (): JSX.Element => {
+  //EXTRAER STATE DE USER
+  const { user } = useContext(ProfileContext);
   const [allFollowing, setAllFollowing] = useState<any[]>([]);
 
   useEffect(() => {
-    if (auth.currentUser?.uid) {
+    if (user) {
       //CONSTRUIR LA QUERY DE LOS QUE SIGUE
       const queryFriends = query(
         collection(db, "users"),
-        where("id", "==", auth.currentUser.uid)
+        where("id", "==", user.uid)
       );
 
       getDocs(queryFriends)
@@ -51,7 +54,7 @@ const HomeFriends = (): JSX.Element => {
         })
         .catch((error) => console.log(error));
     }
-  }, []);
+  }, [user]);
 
   return (
     <div className="home-friends">

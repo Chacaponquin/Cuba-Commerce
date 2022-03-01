@@ -14,6 +14,7 @@ export const signUpErrors = {
   passwordCorta: "Su contraseña debe tener mas de 6 caracteres",
   requestError: "Hubo un error",
   emailRepetido: "Ya existe este usuario",
+  imageError: "La imagen no puede pesar mas de 10mb",
 };
 
 export const signInErrors = {
@@ -39,6 +40,7 @@ export const addProductErrors = {
 export const myProfileErrors = {
   requestError: "Hubo un error",
   nicknameLong: "Tu nuevo nickname es demasiado largo",
+  imageError: "La imagen no puede pesar mas de 10mb",
 };
 
 export const searchErrors = {

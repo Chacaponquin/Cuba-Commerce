@@ -8,7 +8,11 @@ import { AddProductData } from "../../helpers/types";
 
 interface AllProdcutsProps {
   id: string | undefined;
-  handleDeleteProduct(id: string): any;
+  handleDeleteProduct(
+    id: string,
+    setAllProducts: Dispatch<any[]>,
+    allProducts: any[]
+  ): any;
   handleSoldProduct(
     id: string,
     allProducts: any[],
@@ -74,7 +78,15 @@ const AllProduct = ({
                     Sold
                     <FaCheck />
                   </button>
-                  <button onClick={() => handleDeleteProduct(product.id)}>
+                  <button
+                    onClick={() =>
+                      handleDeleteProduct(
+                        product.id,
+                        setAllProducts,
+                        allProducts
+                      )
+                    }
+                  >
                     Delete
                     <BsX />
                   </button>

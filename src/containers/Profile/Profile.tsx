@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FaCheck, FaPlus } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router";
 import { NavBar, ProfileLoading } from "../../components";
-import { auth, db } from "../../firebase/client";
+import { db } from "../../firebase/client";
 import { AddProductData } from "../../helpers/types";
 import { Error } from "../../components";
 import {
@@ -17,10 +17,13 @@ import {
 } from "firebase/firestore";
 import { mostrarError, profileErrors } from "../../helpers/errors";
 import "./profile.css";
+import { ProfileContext } from "../../context/ProfileContext";
 
 const Profile = (): JSX.Element => {
   //EXTRAER EL ID DEL USUARIO DE LA RUTA
   const { id } = useParams();
+  //EXTRAER CONTEXT DE USER
+  const { user } = useContext(ProfileContext);
   const navigate = useNavigate();
   //STATE PARA SABER SI SE SIGUE AL USUARIO
   const [follow, setFollow] = useState<boolean>(false);
@@ -34,15 +37,13 @@ const Profile = (): JSX.Element => {
 
   //FUNCION PARA SEGUIR AL USUARIO
   const handleDecideFollow = async () => {
-    if (id && auth.currentUser?.uid) {
+    if (id && user) {
       updateDoc(doc(db, "users", id), {
-        followers: follow
-          ? arrayRemove(auth.currentUser.uid)
-          : arrayUnion(auth.currentUser.uid),
+        followers: follow ? arrayRemove(user.uid) : arrayUnion(user.uid),
       })
         .then(() => {
-          if (auth.currentUser?.uid) {
-            updateDoc(doc(db, "users", auth.currentUser.uid), {
+          if (user.uid) {
+            updateDoc(doc(db, "users", user.uid), {
               following: follow ? arrayRemove(id) : arrayUnion(id),
             });
 
@@ -70,7 +71,7 @@ const Profile = (): JSX.Element => {
 
           //VERIFICAR SI SE SIGUE AL USUARIO
           const checkFollow = profileFound.followers.find(
-            (el: string) => el === auth.currentUser?.uid
+            (el: string) => el === user.uid
           );
           if (checkFollow) setFollow(true);
         });
@@ -83,6 +84,7 @@ const Profile = (): JSX.Element => {
         collection(db, "products"),
         where("creatorID", "==", id)
       );
+
       //OBTENER TODOS LOS PRODUCTOS
       let allProducts: any[] = [];
       getDocs(productsQuery)
@@ -94,7 +96,7 @@ const Profile = (): JSX.Element => {
         .catch((error) => console.log(error))
         .finally(() => setProductLoading(false));
     }
-  }, [id, navigate]);
+  }, [id, navigate, user]);
 
   return (
     <>
